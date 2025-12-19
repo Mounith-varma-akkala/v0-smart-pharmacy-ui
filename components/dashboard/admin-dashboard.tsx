@@ -65,26 +65,37 @@ export default function AdminDashboard() {
       const { data: medicines } = await supabase.from("medicines").select("quantity")
       const totalStock = medicines?.reduce((sum, m) => sum + (m.quantity || 0), 0) || 0
 
-      // Fetch today's sales
-      const today = new Date().toISOString().split("T")[0]
-      const { data: todaySales } = await supabase.from("sales").select("quantity").gte("sale_date", `${today}T00:00:00`)
-      const soldToday = todaySales?.reduce((sum, s) => sum + (s.quantity || 0), 0) || 0
+      // Fetch today's sales from MySQL
+      try {
+        const response = await fetch('/api/sales/stats?period=today')
+        const result = await response.json()
+        const soldToday = result.success ? result.data.summary.total_units_sold || 0 : 0
 
-      // Fetch expiring soon medicines (within 30 days)
-      const thirtyDaysFromNow = new Date()
-      thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
-      const { count: expiringCount } = await supabase
-        .from("medicines")
-        .select("*", { count: "exact", head: true })
-        .lte("expiry_date", thirtyDaysFromNow.toISOString().split("T")[0])
-        .gte("expiry_date", today)
+        // Fetch expiring soon medicines (within 30 days)
+        const today = new Date().toISOString().split("T")[0]
+        const thirtyDaysFromNow = new Date()
+        thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
+        const { count: expiringCount } = await supabase
+          .from("medicines")
+          .select("*", { count: "exact", head: true })
+          .lte("expiry_date", thirtyDaysFromNow.toISOString().split("T")[0])
+          .gte("expiry_date", today)
 
-      setStats({
-        totalMedicines: totalCount || 0,
-        soldToday,
-        remainingStock: totalStock,
-        expiringSoon: expiringCount || 0,
-      })
+        setStats({
+          totalMedicines: totalCount || 0,
+          soldToday,
+          remainingStock: totalStock,
+          expiringSoon: expiringCount || 0,
+        })
+      } catch (error) {
+        console.error('Error fetching MySQL sales data:', error)
+        setStats({
+          totalMedicines: totalCount || 0,
+          soldToday: 0,
+          remainingStock: totalStock,
+          expiringSoon: 0,
+        })
+      }
 
       // Fetch category-wise stock
       const { data: allMedicines } = await supabase.from("medicines").select("category, quantity")

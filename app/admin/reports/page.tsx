@@ -22,32 +22,50 @@ export default function ReportsPage() {
 
   useEffect(() => {
     const fetchReports = async () => {
-      // Fetch sales data
-      const { data: sales } = await supabase
-        .from("sales")
-        .select("quantity, total_price, sale_date")
-        .order("sale_date", { ascending: false })
+      try {
+        // Fetch sales data from MySQL
+        const response = await fetch('/api/sales/stats?period=month')
+        const result = await response.json()
 
-      const totalRevenue = sales?.reduce((sum, s) => sum + (s.total_price || 0), 0) || 0
-      const totalSalesCount = sales?.reduce((sum, s) => sum + (s.quantity || 0), 0) || 0
+        if (result.success) {
+          const { summary, salesTrend } = result.data
+          
+          setStats({
+            totalRevenue: summary.total_revenue || 0,
+            totalProfit: (summary.total_revenue || 0) * 0.3, // Assuming 30% profit margin
+            totalSales: summary.total_units_sold || 0,
+            stockValue: 0, // Will be calculated from medicines
+          })
 
-      // Fetch inventory value
-      const { data: medicines } = await supabase.from("medicines").select("quantity, price")
-      const stockValue = medicines?.reduce((sum, m) => sum + (m.quantity || 0) * (m.price || 0), 0) || 0
+          // Process sales trend data for chart
+          const chartData = salesTrend.map((item: any) => ({
+            date: new Date(item.sale_day).toLocaleDateString(),
+            revenue: item.revenue || 0,
+            sales: item.units_sold || 0,
+          }))
+          setSalesTrend(chartData)
+        }
 
-      setStats({
-        totalRevenue,
-        totalProfit: totalRevenue * 0.3, // Assuming 30% profit margin
-        totalSales: totalSalesCount,
-        stockValue,
-      })
+        // Fetch inventory value from Supabase
+        const { data: medicines } = await supabase.from("medicines").select("quantity, price")
+        const stockValue = medicines?.reduce((sum, m) => sum + (m.quantity || 0) * (m.price || 0), 0) || 0
 
-      // Process sales trend data
-      const trendMap = new Map()
-      sales?.forEach((sale) => {
-        const date = new Date(sale.sale_date).toLocaleDateString()
-        trendMap.set(date, (trendMap.get(date) || 0) + (sale.total_price || 0))
-      })
+        setStats(prev => ({
+          ...prev,
+          stockValue
+        }))
+
+      } catch (error) {
+        console.error('Error fetching reports data:', error)
+        // Set default values on error
+        setStats({
+          totalRevenue: 0,
+          totalProfit: 0,
+          totalSales: 0,
+          stockValue: 0,
+        })
+        setSalesTrend([])
+      }
 
       setSalesTrend(
         Array.from(trendMap.entries())
