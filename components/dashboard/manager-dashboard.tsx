@@ -7,44 +7,76 @@ import { AnimatedCounter } from "@/components/animated-counter"
 import DashboardLayout from "@/components/dashboard/dashboard-layout"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { Badge } from "@/components/ui/badge"
+import { createClient } from "@/lib/supabase/client"
 
 export default function ManagerDashboard() {
+  const supabase = createClient()
   const [stats, setStats] = useState({
-    soldToday: 342,
-    remainingStock: 48765,
-    pendingAlerts: 5,
-    salesTarget: 85,
+    soldToday: 0,
+    remainingStock: 0,
+    pendingAlerts: 0,
+    salesTarget: 0,
   })
 
   const [salesData, setSalesData] = useState([
-    { day: "Mon", sales: 420 },
-    { day: "Tue", sales: 380 },
-    { day: "Wed", sales: 510 },
-    { day: "Thu", sales: 460 },
-    { day: "Fri", sales: 580 },
-    { day: "Sat", sales: 620 },
-    { day: "Sun", sales: 340 },
+    { day: "Mon", sales: 0 },
+    { day: "Tue", sales: 0 },
+    { day: "Wed", sales: 0 },
+    { day: "Thu", sales: 0 },
+    { day: "Fri", sales: 0 },
+    { day: "Sat", sales: 0 },
+    { day: "Sun", sales: 0 },
   ])
 
-  // Simulate real-time updates
   useEffect(() => {
-    const interval = setInterval(() => {
-      setStats((prev) => ({
-        ...prev,
-        soldToday: prev.soldToday + Math.floor(Math.random() * 2),
-        remainingStock: prev.remainingStock - Math.floor(Math.random() * 5),
-      }))
-    }, 2000)
+    const fetchStats = async () => {
+      // Fetch today's sales
+      const today = new Date().toISOString().split("T")[0]
+      const { data: todaySales } = await supabase.from("sales").select("quantity").gte("sale_date", `${today}T00:00:00`)
+      const soldToday = todaySales?.reduce((sum, s) => sum + (s.quantity || 0), 0) || 0
 
-    return () => clearInterval(interval)
+      // Fetch total stock
+      const { data: medicines } = await supabase.from("medicines").select("quantity")
+      const totalStock = medicines?.reduce((sum, m) => sum + (m.quantity || 0), 0) || 0
+
+      // Fetch pending alerts
+      const { count: alertCount } = await supabase
+        .from("alerts")
+        .select("*", { count: "exact", head: true })
+        .eq("is_read", false)
+
+      setStats({
+        soldToday,
+        remainingStock: totalStock,
+        pendingAlerts: alertCount || 0,
+        salesTarget: 85,
+      })
+    }
+
+    fetchStats()
+
+    // Real-time subscription
+    const channel = supabase
+      .channel("manager-updates")
+      .on("postgres_changes", { event: "*", schema: "public", table: "sales" }, () => {
+        fetchStats()
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "medicines" }, () => {
+        fetchStats()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   return (
     <DashboardLayout role="manager">
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Manager Dashboard</h1>
-          <p className="text-muted-foreground">Monitor daily sales and inventory updates</p>
+          <h1 className="text-3xl font-normal mb-2">Manager Dashboard</h1>
+          <p className="text-muted-foreground font-light">Monitor daily sales and inventory updates</p>
         </div>
 
         {/* Stats Cards */}
@@ -54,13 +86,13 @@ export default function ManagerDashboard() {
               <div className="p-3 rounded-xl bg-primary/10">
                 <ShoppingCart className="w-6 h-6 text-primary" />
               </div>
-              <Badge variant="outline" className="text-success">
+              <Badge variant="outline" className="text-success font-normal">
                 +8%
               </Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Sold Today</p>
-              <p className="text-3xl font-bold">
+              <p className="text-sm text-muted-foreground font-light">Sold Today</p>
+              <p className="text-3xl font-normal">
                 <AnimatedCounter value={stats.soldToday} />
               </p>
             </div>
@@ -73,8 +105,8 @@ export default function ManagerDashboard() {
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Remaining Stock</p>
-              <p className="text-3xl font-bold">
+              <p className="text-sm text-muted-foreground font-light">Remaining Stock</p>
+              <p className="text-3xl font-normal">
                 <AnimatedCounter value={stats.remainingStock} />
               </p>
             </div>
@@ -85,11 +117,15 @@ export default function ManagerDashboard() {
               <div className="p-3 rounded-xl bg-destructive/10">
                 <AlertTriangle className="w-6 h-6 text-destructive" />
               </div>
-              <Badge variant="destructive">New</Badge>
+              {stats.pendingAlerts > 0 && (
+                <Badge variant="destructive" className="font-normal">
+                  New
+                </Badge>
+              )}
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Pending Alerts</p>
-              <p className="text-3xl font-bold text-destructive">{stats.pendingAlerts}</p>
+              <p className="text-sm text-muted-foreground font-light">Pending Alerts</p>
+              <p className="text-3xl font-normal text-destructive">{stats.pendingAlerts}</p>
             </div>
           </Card>
 
@@ -100,15 +136,15 @@ export default function ManagerDashboard() {
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Sales Target</p>
-              <p className="text-3xl font-bold text-primary">{stats.salesTarget}%</p>
+              <p className="text-sm text-muted-foreground font-light">Sales Target</p>
+              <p className="text-3xl font-normal text-primary">{stats.salesTarget}%</p>
             </div>
           </Card>
         </div>
 
         {/* Weekly Sales Chart */}
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Weekly Sales Performance</h3>
+          <h3 className="text-lg font-normal mb-4">Weekly Sales Performance</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={salesData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -133,22 +169,6 @@ export default function ManagerDashboard() {
             </LineChart>
           </ResponsiveContainer>
         </Card>
-
-        {/* Quick Actions */}
-        <div className="grid md:grid-cols-3 gap-4">
-          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
-            <h4 className="font-semibold mb-2">View Alerts</h4>
-            <p className="text-sm text-muted-foreground">Check pending alerts and notifications from admin</p>
-          </Card>
-          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
-            <h4 className="font-semibold mb-2">Update Inventory</h4>
-            <p className="text-sm text-muted-foreground">Confirm daily inventory updates and sales entries</p>
-          </Card>
-          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
-            <h4 className="font-semibold mb-2">View Forecasts</h4>
-            <p className="text-sm text-muted-foreground">Access AI-powered demand forecasting data</p>
-          </Card>
-        </div>
       </div>
     </DashboardLayout>
   )

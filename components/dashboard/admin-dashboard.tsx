@@ -21,13 +21,14 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts"
+import { createClient } from "@/lib/supabase/client"
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
-    totalMedicines: 5234,
-    soldToday: 342,
-    remainingStock: 48765,
-    expiringSoon: 28,
+    totalMedicines: 0,
+    soldToday: 0,
+    remainingStock: 0,
+    expiringSoon: 0,
   })
 
   const [salesData, setSalesData] = useState([
@@ -40,31 +41,94 @@ export default function AdminDashboard() {
   ])
 
   const [categoryData, setCategoryData] = useState([
-    { category: "Antibiotics", stock: 8500 },
-    { category: "Pain Relief", stock: 6200 },
-    { category: "Vitamins", stock: 4800 },
-    { category: "Cardiac", stock: 3200 },
-    { category: "Diabetes", stock: 5400 },
+    { category: "Antibiotics", stock: 0 },
+    { category: "Pain Relief", stock: 0 },
+    { category: "Vitamins", stock: 0 },
+    { category: "Cardiac", stock: 0 },
+    { category: "Diabetes", stock: 0 },
   ])
 
   const [expiryData, setExpiryData] = useState([
-    { name: "Active", value: 4850, color: "#0081FF" },
-    { name: "Expiring Soon", value: 284, color: "#FFA500" },
-    { name: "Expired", value: 100, color: "#FF4444" },
+    { name: "Active", value: 0, color: "#0081FF" },
+    { name: "Expiring Soon", value: 0, color: "#FFA500" },
+    { name: "Expired", value: 0, color: "#FF4444" },
   ])
 
-  // Simulate real-time updates
   useEffect(() => {
-    const interval = setInterval(() => {
-      setStats((prev) => ({
-        totalMedicines: prev.totalMedicines + Math.floor(Math.random() * 3 - 1),
-        soldToday: prev.soldToday + Math.floor(Math.random() * 2),
-        remainingStock: prev.remainingStock - Math.floor(Math.random() * 5),
-        expiringSoon: prev.expiringSoon + Math.floor(Math.random() * 2 - 1),
-      }))
-    }, 2000)
+    const supabase = createClient()
 
-    return () => clearInterval(interval)
+    const fetchStats = async () => {
+      // Fetch total medicines count
+      const { count: totalCount } = await supabase.from("medicines").select("*", { count: "exact", head: true })
+
+      // Fetch total stock quantity
+      const { data: medicines } = await supabase.from("medicines").select("quantity")
+      const totalStock = medicines?.reduce((sum, m) => sum + (m.quantity || 0), 0) || 0
+
+      // Fetch today's sales
+      const today = new Date().toISOString().split("T")[0]
+      const { data: todaySales } = await supabase.from("sales").select("quantity").gte("sale_date", `${today}T00:00:00`)
+      const soldToday = todaySales?.reduce((sum, s) => sum + (s.quantity || 0), 0) || 0
+
+      // Fetch expiring soon medicines (within 30 days)
+      const thirtyDaysFromNow = new Date()
+      thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
+      const { count: expiringCount } = await supabase
+        .from("medicines")
+        .select("*", { count: "exact", head: true })
+        .lte("expiry_date", thirtyDaysFromNow.toISOString().split("T")[0])
+        .gte("expiry_date", today)
+
+      setStats({
+        totalMedicines: totalCount || 0,
+        soldToday,
+        remainingStock: totalStock,
+        expiringSoon: expiringCount || 0,
+      })
+
+      // Fetch category-wise stock
+      const { data: allMedicines } = await supabase.from("medicines").select("category, quantity")
+      const categoryMap = new Map<string, number>()
+      allMedicines?.forEach((med) => {
+        const cat = med.category || "Other"
+        categoryMap.set(cat, (categoryMap.get(cat) || 0) + (med.quantity || 0))
+      })
+
+      setCategoryData(
+        Array.from(categoryMap.entries())
+          .map(([category, stock]) => ({ category, stock }))
+          .slice(0, 5),
+      )
+
+      // Calculate expiry distribution
+      const now = new Date()
+      const expired = allMedicines?.filter((m) => new Date(m.expiry_date || "") < now).length || 0
+      const expiringSoon =
+        allMedicines?.filter((m) => {
+          const exp = new Date(m.expiry_date || "")
+          return exp >= now && exp <= thirtyDaysFromNow
+        }).length || 0
+      const active = (allMedicines?.length || 0) - expired - expiringSoon
+
+      setExpiryData([
+        { name: "Active", value: active, color: "#0081FF" },
+        { name: "Expiring Soon", value: expiringSoon, color: "#FFA500" },
+        { name: "Expired", value: expired, color: "#FF4444" },
+      ])
+    }
+
+    fetchStats()
+
+    const channel = supabase
+      .channel("medicines-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "medicines" }, () => {
+        fetchStats()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   return (
@@ -88,7 +152,7 @@ export default function AdminDashboard() {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Sales vs Inventory Line Chart */}
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Sales vs Inventory Trend</h3>
+            <h3 className="text-lg font-normal mb-4">Sales vs Inventory Trend</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={salesData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -123,7 +187,7 @@ export default function AdminDashboard() {
 
           {/* Category-wise Stock Bar Chart */}
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Category-wise Stock Levels</h3>
+            <h3 className="text-lg font-normal mb-4">Category-wise Stock Levels</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={categoryData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -144,7 +208,7 @@ export default function AdminDashboard() {
 
         {/* Expiry Pie Chart */}
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Stock Status Distribution</h3>
+          <h3 className="text-lg font-normal mb-4">Stock Status Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -193,14 +257,14 @@ function StatCard({
             <Icon className={`w-6 h-6 ${alert ? "text-destructive" : "text-primary"}`} />
           </div>
           <div
-            className={`text-sm font-medium ${trendUp ? "text-success" : alert ? "text-destructive" : "text-warning"}`}
+            className={`text-sm font-normal ${trendUp ? "text-success" : alert ? "text-destructive" : "text-warning"}`}
           >
             {trend}
           </div>
         </div>
         <div className="space-y-1">
-          <p className="text-sm text-muted-foreground">{title}</p>
-          <p className="text-3xl font-bold">
+          <p className="text-sm text-muted-foreground font-light">{title}</p>
+          <p className="text-3xl font-normal">
             <AnimatedCounter value={value} />
           </p>
         </div>
