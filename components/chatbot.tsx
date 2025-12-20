@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Bot, X, Send, Loader2, ChevronDown, ChevronRight } from "lucide-react"
+import { Bot, X, Send, Loader2, ChevronDown, ChevronRight, Calendar, Mail, ExternalLink } from "lucide-react"
 
 interface Message {
   id: number
@@ -19,87 +19,198 @@ interface Message {
   isJsonResponse?: boolean
 }
 
-// Component to render JSON responses nicely
-function JsonResponseRenderer({ data }: { data: any }) {
+// Component to render JSON responses in a user-friendly structured format
+function StructuredResponseRenderer({ data }: { data: any }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   if (!data || typeof data !== 'object') {
     return null
   }
 
-  const renderValue = (value: any, key?: string): React.ReactNode => {
-    if (value === null) return <span className="text-gray-500">null</span>
-    if (typeof value === 'boolean') return <span className="text-blue-600">{value.toString()}</span>
-    if (typeof value === 'number') return <span className="text-green-600">{value}</span>
+  // Function to get an appropriate icon for the field
+  const getFieldIcon = (key: string, value: any) => {
+    const lowerKey = key.toLowerCase()
+    
+    if (lowerKey.includes('date') || lowerKey.includes('time') || lowerKey.includes('expir')) {
+      return <Calendar className="w-4 h-4 text-blue-500" />
+    }
+    if (lowerKey.includes('email') || lowerKey.includes('mail')) {
+      return <Mail className="w-4 h-4 text-green-500" />
+    }
+    if (lowerKey.includes('url') || lowerKey.includes('link') || lowerKey.includes('website')) {
+      return <ExternalLink className="w-4 h-4 text-purple-500" />
+    }
+    if (lowerKey.includes('stock') || lowerKey.includes('quantity') || lowerKey.includes('amount')) {
+      return <span className="text-orange-500">📦</span>
+    }
+    if (lowerKey.includes('medicine') || lowerKey.includes('drug') || lowerKey.includes('medication')) {
+      return <span className="text-red-500">💊</span>
+    }
+    if (lowerKey.includes('price') || lowerKey.includes('cost') || lowerKey.includes('money')) {
+      return <span className="text-green-500">💰</span>
+    }
+    if (lowerKey.includes('status') || lowerKey.includes('state')) {
+      return <span className="text-blue-500">📊</span>
+    }
+    
+    return <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+  }
+
+  // Function to render different types of data in a user-friendly way
+  const renderStructuredData = (obj: any): React.ReactNode => {
+    if (!obj || typeof obj !== 'object') return null
+
+    return (
+      <div className="space-y-3">
+        {Object.entries(obj).map(([key, value]) => {
+          // Skip null or undefined values
+          if (value === null || value === undefined) return null
+
+          // Format the key to be more readable
+          const formattedKey = key
+            .replace(/([A-Z])/g, ' $1')
+            .replace(/^./, str => str.toUpperCase())
+            .replace(/_/g, ' ')
+
+          return (
+            <div key={key} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-1">
+                  {getFieldIcon(key, value)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                    {formattedKey}
+                  </h4>
+                  <div className="text-sm text-gray-700">
+                    {renderValue(value)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  const renderValue = (value: any): React.ReactNode => {
+    if (value === null || value === undefined) {
+      return <span className="text-gray-400 italic">Not specified</span>
+    }
+
+    if (typeof value === 'boolean') {
+      return (
+        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+          value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          {value ? 'Yes' : 'No'}
+        </span>
+      )
+    }
+
+    if (typeof value === 'number') {
+      return <span className="font-mono text-blue-600">{value.toLocaleString()}</span>
+    }
+
     if (typeof value === 'string') {
-      // If it's a long string, truncate it
+      // Check if it's a date
+      if (value.match(/^\d{4}-\d{2}-\d{2}/) || value.match(/^\d{1,2}\/\d{1,2}\/\d{4}/)) {
+        try {
+          const date = new Date(value)
+          if (!isNaN(date.getTime())) {
+            return <span className="text-purple-600">{date.toLocaleDateString()}</span>
+          }
+        } catch {}
+      }
+
+      // Check if it's a URL
+      if (value.startsWith('http://') || value.startsWith('https://')) {
+        return (
+          <a href={value} target="_blank" rel="noopener noreferrer" 
+             className="text-blue-600 hover:text-blue-800 underline">
+            {value}
+          </a>
+        )
+      }
+
+      // Check if it's an email
+      if (value.includes('@') && value.includes('.')) {
+        return (
+          <a href={`mailto:${value}`} className="text-blue-600 hover:text-blue-800 underline">
+            {value}
+          </a>
+        )
+      }
+
+      // Regular string - format nicely
       if (value.length > 100) {
+        const [showFull, setShowFull] = useState(false)
         return (
           <div>
-            <span className="text-gray-800">{value.substring(0, 100)}...</span>
-            <button 
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="text-blue-500 hover:text-blue-700 ml-2 text-xs"
+            <p className="whitespace-pre-wrap">
+              {showFull ? value : `${value.substring(0, 100)}...`}
+            </p>
+            <button
+              onClick={() => setShowFull(!showFull)}
+              className="text-blue-500 hover:text-blue-700 text-xs mt-1 underline"
             >
-              {isExpanded ? 'Show less' : 'Show more'}
+              {showFull ? 'Show less' : 'Show more'}
             </button>
-            {isExpanded && (
-              <div className="mt-2 p-2 bg-gray-50 rounded text-sm">
-                {value}
-              </div>
-            )}
           </div>
         )
       }
-      return <span className="text-gray-800">"{value}"</span>
+
+      return <span className="whitespace-pre-wrap">{value}</span>
     }
+
     if (Array.isArray(value)) {
       return (
-        <div className="ml-4">
-          <span className="text-gray-600">[</span>
+        <div className="space-y-2">
           {value.map((item, index) => (
-            <div key={index} className="ml-2">
-              {renderValue(item)}
-              {index < value.length - 1 && <span className="text-gray-600">,</span>}
+            <div key={index} className="flex items-start gap-2">
+              <span className="flex-shrink-0 w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center text-xs text-gray-600 mt-0.5">
+                {index + 1}
+              </span>
+              <div className="flex-1">
+                {typeof item === 'object' ? (
+                  <div className="bg-gray-50 rounded p-2">
+                    {renderStructuredData(item)}
+                  </div>
+                ) : (
+                  renderValue(item)
+                )}
+              </div>
             </div>
           ))}
-          <span className="text-gray-600">]</span>
         </div>
       )
     }
+
     if (typeof value === 'object') {
       return (
-        <div className="ml-4">
-          <span className="text-gray-600">{"{"}</span>
-          {Object.entries(value).map(([k, v], index, arr) => (
-            <div key={k} className="ml-2">
-              <span className="text-purple-600">"{k}"</span>
-              <span className="text-gray-600">: </span>
-              {renderValue(v, k)}
-              {index < arr.length - 1 && <span className="text-gray-600">,</span>}
-            </div>
-          ))}
-          <span className="text-gray-600">{"}"}</span>
+        <div className="bg-gray-50 rounded-lg p-3 mt-2">
+          {renderStructuredData(value)}
         </div>
       )
     }
+
     return <span>{String(value)}</span>
   }
 
   return (
-    <div className="mt-3 p-3 bg-gray-50 rounded-lg border">
-      <div className="flex items-center gap-2 mb-2">
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-gray-900"
-        >
-          {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          Structured Response
-        </button>
-      </div>
+    <div className="mt-4 border-t border-gray-200 pt-4">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 mb-3"
+      >
+        {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+        <span>📋 Detailed Information</span>
+      </button>
+      
       {isExpanded && (
-        <div className="font-mono text-sm overflow-x-auto">
-          {renderValue(data)}
+        <div className="bg-gray-50 rounded-lg p-4">
+          {renderStructuredData(data)}
         </div>
       )}
     </div>
@@ -260,9 +371,9 @@ export default function ChatBot() {
                         )}
                         <div className="flex-1">
                           <p className="text-sm whitespace-pre-wrap">{message.text}</p>
-                          {/* Render structured JSON data if available */}
+                          {/* Render structured data if available */}
                           {message.responseData && message.isJsonResponse && (
-                            <JsonResponseRenderer data={message.responseData} />
+                            <StructuredResponseRenderer data={message.responseData} />
                           )}
                         </div>
                       </div>
