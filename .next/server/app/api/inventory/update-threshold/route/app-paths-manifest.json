@@ -1,0 +1,3 @@
+{
+  "/api/inventory/update-threshold/route": "app/api/inventory/update-threshold/route.js"
+}

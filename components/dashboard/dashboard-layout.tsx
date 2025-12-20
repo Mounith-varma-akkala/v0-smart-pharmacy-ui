@@ -21,10 +21,16 @@ import {
   FileCheck,
   User,
   LogOut,
+  Building,
+  Calendar,
+  DollarSign,
+  Target,
+  Pill,
+  ShoppingCart,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import ChatBot from "@/components/chatbot"
+import PharmacyChatbot from "@/components/pharmacy-chatbot"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,9 +53,12 @@ export default function DashboardLayout({
 
   const adminNavItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/admin/dashboard" },
-    { icon: TrendingUp, label: "Demand Forecasting", href: "/admin/forecasting" },
+    { icon: Building, label: "Suppliers", href: "/admin/suppliers" },
+    { icon: Calendar, label: "Expiry Management (FEFO)", href: "/admin/expiry-management" },
+    { icon: DollarSign, label: "Price Forecasting", href: "/admin/price-forecasting" },
+    { icon: Target, label: "Demand Analysis", href: "/admin/demand-analysis" },
     { icon: Package, label: "Inventory", href: "/admin/inventory" },
-    { icon: AlertTriangle, label: "Expiry Management", href: "/admin/expiry" },
+    { icon: ShoppingCart, label: "Review Stock Requests", href: "/admin/review-requests" },
     { icon: Bell, label: "Alerts", href: "/admin/alerts", badge: notifications },
     { icon: BarChart3, label: "Reports & Analytics", href: "/admin/reports" },
     { icon: FileCheck, label: "Prescription Check", href: "/admin/prescription" },
@@ -58,6 +67,7 @@ export default function DashboardLayout({
 
   const managerNavItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/manager/dashboard" },
+    { icon: ShoppingCart, label: "Low Stock Requests", href: "/manager/low-stock-requests" },
     { icon: TrendingUp, label: "View Forecasting", href: "/manager/forecasting" },
     { icon: Package, label: "Inventory", href: "/manager/inventory" },
     { icon: Bell, label: "Alerts", href: "/manager/alerts", badge: notifications },
@@ -157,8 +167,8 @@ export default function DashboardLayout({
         <div className="p-6 max-w-7xl mx-auto">{children}</div>
       </main>
 
-      {/* Chatbot */}
-      <ChatBot />
+      {/* Pharmacy Chatbot */}
+      <PharmacyChatbot />
 
       {/* Overlay for mobile sidebar */}
       {sidebarOpen && (
