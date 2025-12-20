@@ -13,60 +13,109 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Send message to the webhook
-    const webhookResponse = await fetch(WEBHOOK_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: message.trim(),
+    console.log('Sending message to webhook:', message.trim())
+
+    // Send message to the webhook with proper timeout and error handling
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+
+    try {
+      const webhookResponse = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          message: message.trim(),
+          timestamp: new Date().toISOString(),
+          source: 'pharmacy-chat'
+        }),
+        signal: controller.signal
+      })
+
+      clearTimeout(timeoutId)
+
+      console.log('Webhook response status:', webhookResponse.status)
+      console.log('Webhook response headers:', Object.fromEntries(webhookResponse.headers.entries()))
+
+      if (!webhookResponse.ok) {
+        const errorText = await webhookResponse.text()
+        console.error('Webhook error response:', errorText)
+        throw new Error(`Webhook responded with status: ${webhookResponse.status} - ${errorText}`)
+      }
+
+      // Get the response text first
+      const responseText = await webhookResponse.text()
+      console.log('Raw webhook response:', responseText)
+
+      let webhookData
+      try {
+        // Try to parse as JSON
+        webhookData = JSON.parse(responseText)
+      } catch (parseError) {
+        // If not JSON, treat as plain text
+        console.log('Response is not JSON, treating as plain text')
+        webhookData = responseText
+      }
+
+      console.log('Parsed webhook data:', webhookData)
+      
+      // Process the webhook response and extract the bot's reply
+      let botReply = 'I apologize, but I encountered an issue processing your request.'
+      
+      // Handle different possible response formats from the webhook
+      if (typeof webhookData === 'string') {
+        botReply = webhookData
+      } else if (webhookData && typeof webhookData === 'object') {
+        // Try various common response field names
+        botReply = webhookData.response || 
+                   webhookData.message || 
+                   webhookData.reply || 
+                   webhookData.answer || 
+                   webhookData.text || 
+                   webhookData.output ||
+                   webhookData.result ||
+                   (webhookData.data && webhookData.data.response) ||
+                   (webhookData.data && webhookData.data.message) ||
+                   JSON.stringify(webhookData) // Fallback to stringified object
+      }
+
+      // Clean up the response text
+      botReply = cleanBotResponse(botReply)
+      console.log('Final bot reply:', botReply)
+
+      return NextResponse.json({
+        success: true,
+        response: botReply,
         timestamp: new Date().toISOString(),
-      }),
-    })
+        debug: {
+          webhookStatus: webhookResponse.status,
+          rawResponse: responseText.substring(0, 200), // First 200 chars for debugging
+          parsedType: typeof webhookData
+        }
+      })
 
-    if (!webhookResponse.ok) {
-      throw new Error(`Webhook responded with status: ${webhookResponse.status}`)
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      
+      if (fetchError.name === 'AbortError') {
+        console.error('Webhook request timed out')
+        throw new Error('Webhook request timed out after 30 seconds')
+      }
+      
+      console.error('Webhook fetch error:', fetchError)
+      throw fetchError
     }
-
-    const webhookData = await webhookResponse.json()
-    
-    // Process the webhook response and extract the bot's reply
-    let botReply = 'I apologize, but I encountered an issue processing your request.'
-    
-    // Handle different possible response formats from the webhook
-    if (typeof webhookData === 'string') {
-      botReply = webhookData
-    } else if (webhookData.response) {
-      botReply = webhookData.response
-    } else if (webhookData.message) {
-      botReply = webhookData.message
-    } else if (webhookData.reply) {
-      botReply = webhookData.reply
-    } else if (webhookData.answer) {
-      botReply = webhookData.answer
-    } else if (webhookData.text) {
-      botReply = webhookData.text
-    } else if (webhookData.data && webhookData.data.response) {
-      botReply = webhookData.data.response
-    }
-
-    // Clean up the response text
-    botReply = cleanBotResponse(botReply)
-
-    return NextResponse.json({
-      success: true,
-      response: botReply,
-      timestamp: new Date().toISOString(),
-    })
 
   } catch (error) {
     console.error('Chatbot API Error:', error)
     
     return NextResponse.json({
       success: false,
-      error: 'Failed to get response from chatbot',
+      error: error.message || 'Failed to get response from chatbot',
       response: 'I apologize, but I\'m having trouble connecting to my knowledge base right now. Please try again in a moment.',
+      timestamp: new Date().toISOString()
     }, { status: 500 })
   }
 }

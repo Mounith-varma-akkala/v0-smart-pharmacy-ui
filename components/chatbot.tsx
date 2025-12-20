@@ -49,7 +49,7 @@ export default function ChatBot() {
     // Add loading message
     const loadingMessage: Message = {
       id: Date.now() + 1,
-      text: "Thinking...",
+      text: "Processing your request...",
       sender: "bot",
       timestamp: new Date(),
       isLoading: true,
@@ -57,6 +57,8 @@ export default function ChatBot() {
     setMessages((prev) => [...prev, loadingMessage])
 
     try {
+      console.log('Sending message to API:', currentInput)
+      
       // Send message to webhook via our API
       const response = await fetch('/api/chatbot', {
         method: 'POST',
@@ -68,7 +70,16 @@ export default function ChatBot() {
         }),
       })
 
+      console.log('API response status:', response.status)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('API error response:', errorText)
+        throw new Error(`API responded with status: ${response.status}`)
+      }
+
       const data = await response.json()
+      console.log('API response data:', data)
 
       // Remove loading message and add bot response
       setMessages((prev) => {
@@ -81,6 +92,11 @@ export default function ChatBot() {
         }
         return [...withoutLoading, botResponse]
       })
+
+      // Log debug info if available
+      if (data.debug) {
+        console.log('Debug info:', data.debug)
+      }
 
     } catch (error) {
       console.error('Chat error:', error)
