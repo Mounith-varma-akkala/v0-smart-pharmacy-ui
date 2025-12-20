@@ -162,31 +162,46 @@ export default function PopulateDataPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-blue-900">
               <Database className="w-6 h-6" />
-              Fresh Database Setup
+              Database Setup Options
             </CardTitle>
             <CardDescription className="text-blue-700">
-              Start with a completely fresh database with sample medicines, sales, and suppliers
+              Choose how to set up your pharmacy database with data
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-white rounded-lg border">
-              <div>
-                <h3 className="font-medium text-blue-900">Create New Database</h3>
-                <p className="text-sm text-blue-700">
-                  Clears all existing data and creates fresh sample data with 10 medicines, 30+ sales records, and 3 suppliers
-                </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="flex items-center justify-between p-4 bg-white rounded-lg border">
+                <div>
+                  <h3 className="font-medium text-blue-900">Fresh Sample Data</h3>
+                  <p className="text-sm text-blue-700">
+                    Create fresh database with 10 medicines, 30+ sales, 3 suppliers
+                  </p>
+                </div>
+                <Button asChild variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-100">
+                  <Link href="/setup-fresh-database">
+                    Setup Fresh Database
+                  </Link>
+                </Button>
               </div>
-              <Button asChild variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-100">
-                <Link href="/setup-fresh-database">
-                  Setup Fresh Database
-                </Link>
-              </Button>
+              <div className="flex items-center justify-between p-4 bg-white rounded-lg border">
+                <div>
+                  <h3 className="font-medium text-blue-900">Import Your JSON Data</h3>
+                  <p className="text-sm text-blue-700">
+                    Import existing sales, medicines, purchases from JSON files
+                  </p>
+                </div>
+                <Button asChild variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-100">
+                  <Link href="/import-json-data">
+                    Import JSON Data
+                  </Link>
+                </Button>
+              </div>
             </div>
             <Alert className="border-blue-200 bg-blue-50">
               <AlertTriangle className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-800">
-                <strong>Recommended:</strong> If you're starting fresh or having issues with existing data, 
-                use the Fresh Database Setup first, then come back here to add additional features.
+                <strong>Choose Your Approach:</strong> Use Fresh Sample Data for testing, 
+                or Import JSON Data if you have existing pharmacy records to migrate.
               </AlertDescription>
             </Alert>
           </CardContent>

@@ -1,0 +1,57 @@
+[
+  {
+    "Transaction_ID": 1,
+    "Date": "2025-12-01",
+    "Drug_Name": "Paracetamol",
+    "Qty_Sold": 10,
+    "Unit_Price": 5.00,
+    "Total_Amount": 50.00,
+    "Payment_Method": "cash",
+    "Customer_Name": "Rahul Sharma",
+    "Customer_Phone": "+91-9876543210"
+  },
+  {
+    "Transaction_ID": 2,
+    "Date": "2025-12-02",
+    "Drug_Name": "Ibuprofen",
+    "Qty_Sold": 5,
+    "Unit_Price": 6.00,
+    "Total_Amount": 30.00,
+    "Payment_Method": "card",
+    "Customer_Name": "Priya Patel",
+    "Customer_Phone": "+91-9876543211"
+  },
+  {
+    "Transaction_ID": 3,
+    "Date": "2025-12-03",
+    "Drug_Name": "Cetirizine",
+    "Qty_Sold": 8,
+    "Unit_Price": 8.00,
+    "Total_Amount": 64.00,
+    "Payment_Method": "upi",
+    "Customer_Name": "Amit Kumar",
+    "Customer_Phone": "+91-9876543212"
+  },
+  {
+    "Transaction_ID": 4,
+    "Date": "2025-12-04",
+    "Drug_Name": "Amoxicillin",
+    "Qty_Sold": 3,
+    "Unit_Price": 15.00,
+    "Total_Amount": 45.00,
+    "Payment_Method": "insurance",
+    "Customer_Name": "Sunita Singh",
+    "Customer_Phone": "+91-9876543213"
+  },
+  {
+    "Transaction_ID": 5,
+    "Date": "2025-12-05",
+    "Drug_Name": "Metformin",
+    "Qty_Sold": 12,
+    "Unit_Price": 12.00,
+    "Total_Amount": 144.00,
+    "Payment_Method": "cash",
+    "Customer_Name": "Vikram Gupta",
+    "Customer_Phone": "+91-9876543214"
+  }
+]

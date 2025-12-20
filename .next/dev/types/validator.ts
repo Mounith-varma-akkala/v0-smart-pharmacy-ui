@@ -173,6 +173,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/import-json-data/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/import-json-data">> = Specific
+  const handler = {} as typeof import("../../../app/import-json-data/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/login/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/login">> = Specific
@@ -429,6 +438,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/forecasting/price-surge">> = Specific
   const handler = {} as typeof import("../../../app/api/forecasting/price-surge/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/import-json/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/import-json">> = Specific
+  const handler = {} as typeof import("../../../app/api/import-json/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

@@ -1,0 +1,62 @@
+[
+  {
+    "Drug_Name": "Paracetamol 500mg",
+    "Generic_Name": "Paracetamol",
+    "Category": "Pain Relief",
+    "Unit_Price": 5.00,
+    "Cost_Price": 3.50,
+    "Quantity": 500,
+    "Min_Stock": 50,
+    "Expiry_Date": "2025-12-31",
+    "Manufacturer": "GSK",
+    "Batch_Number": "PAR001"
+  },
+  {
+    "Drug_Name": "Ibuprofen 400mg",
+    "Generic_Name": "Ibuprofen",
+    "Category": "Pain Relief",
+    "Unit_Price": 6.00,
+    "Cost_Price": 4.00,
+    "Quantity": 300,
+    "Min_Stock": 30,
+    "Expiry_Date": "2025-10-15",
+    "Manufacturer": "Abbott",
+    "Batch_Number": "IBU001"
+  },
+  {
+    "Drug_Name": "Amoxicillin 250mg",
+    "Generic_Name": "Amoxicillin",
+    "Category": "Antibiotics",
+    "Unit_Price": 15.00,
+    "Cost_Price": 10.00,
+    "Quantity": 200,
+    "Min_Stock": 25,
+    "Expiry_Date": "2025-08-20",
+    "Manufacturer": "Cipla",
+    "Batch_Number": "AMX001"
+  },
+  {
+    "Drug_Name": "Cetirizine 10mg",
+    "Generic_Name": "Cetirizine",
+    "Category": "Antihistamine",
+    "Unit_Price": 8.00,
+    "Cost_Price": 5.50,
+    "Quantity": 400,
+    "Min_Stock": 40,
+    "Expiry_Date": "2025-11-30",
+    "Manufacturer": "Dr. Reddy",
+    "Batch_Number": "CET001"
+  },
+  {
+    "Drug_Name": "Metformin 500mg",
+    "Generic_Name": "Metformin",
+    "Category": "Diabetes",
+    "Unit_Price": 12.00,
+    "Cost_Price": 8.00,
+    "Quantity": 250,
+    "Min_Stock": 30,
+    "Expiry_Date": "2025-09-25",
+    "Manufacturer": "Sun Pharma",
+    "Batch_Number": "MET001"
+  }
+]
