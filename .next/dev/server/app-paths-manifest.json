@@ -1,1 +1,4 @@
-{}
+{
+  "/api/reset-database/route": "app/api/reset-database/route.js",
+  "/setup-fresh-database/page": "app/setup-fresh-database/page.js"
+}

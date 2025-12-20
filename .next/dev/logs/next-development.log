@@ -1,1 +1,12 @@
-[00:00:01.599] Server  LOG      ✓ Ready in 1160ms
+[00:00:01.384] Server  LOG      ✓ Ready in 1045ms
+[00:00:36.610] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:36.885] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:36.885] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/setup-fresh-database","route":"/setup-fresh-database"}
+[00:00:36.885] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/setup-fresh-database color: rgb(120, 120, 120) color: inherit {"dp":"/setup-fresh-database","o":"http://localhost:3001/setup-fresh-database","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766202495371}
+[00:00:54.429] Server  WARN    Warning dropping table low_stock_requests: "Could not find the table 'public.low_stock_requests' in the schema cache"
+[00:00:54.705] Server  WARN    Warning dropping table drug_substitutions: "Could not find the table 'public.drug_substitutions' in the schema cache"
+[00:00:54.973] Server  WARN    Warning dropping table supplier_medicines: "Could not find the table 'public.supplier_medicines' in the schema cache"
+[00:00:55.512] Server  WARN    Warning dropping table suppliers: "Could not find the table 'public.suppliers' in the schema cache"
+[00:00:55.779] Server  WARN    Warning dropping table users: "Could not find the table 'public.users' in the schema cache"
+[00:00:56.056] Server  ERROR   Error creating suppliers: {}
+[00:00:56.329] Server  ERROR   Error creating medicines: {}
