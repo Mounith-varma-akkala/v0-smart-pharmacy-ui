@@ -1,6 +1,6 @@
 // n8n Chat Widget Configuration for Pharmacy Application
 export const pharmacyChatConfig = {
-  webhookUrl: 'https://shyam.mlritcie.in/webhook/223b953b-ef97-4800-a1be-8b05890044c1/chat',
+  webhookUrl: 'https://shyam.mlritcie.in/webhook/6e594a8e-7463-4151-9412-1335015568a3',
   webhookConfig: {
     method: 'POST',
     headers: {

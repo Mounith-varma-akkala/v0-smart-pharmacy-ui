@@ -10,7 +10,7 @@
 
 // Main pharmacy chat configuration
 const PHARMACY_CHAT_CONFIG = {
-    webhookUrl: 'https://shyam.mlritcie.in/webhook/223b953b-ef97-4800-a1be-8b05890044c1/chat',
+    webhookUrl: 'https://shyam.mlritcie.in/webhook/6e594a8e-7463-4151-9412-1335015568a3',
     webhookConfig: {
         method: 'POST',
         headers: {

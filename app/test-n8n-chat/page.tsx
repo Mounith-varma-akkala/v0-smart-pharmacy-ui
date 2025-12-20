@@ -17,7 +17,7 @@ export default function TestN8nChatPage() {
           Test the customized n8n chat widget for Smart Pharmacy
         </p>
         <Badge variant="outline" className="text-sm">
-          Webhook: https://shyam.mlritcie.in/webhook/223b953b-ef97-4800-a1be-8b05890044c1/chat
+          Webhook: https://shyam.mlritcie.in/webhook/6e594a8e-7463-4151-9412-1335015568a3
         </Badge>
       </div>
 
@@ -97,7 +97,7 @@ export default function TestN8nChatPage() {
             <div>
               <h4 className="font-semibold mb-2">Webhook Configuration</h4>
               <div className="text-sm space-y-1">
-                <p><strong>URL:</strong> https://shyam.mlritcie.in/webhook/...</p>
+                <p><strong>URL:</strong> https://shyam.mlritcie.in/webhook/6e594a8e-7463-4151-9412-1335015568a3</p>
                 <p><strong>Method:</strong> POST</p>
                 <p><strong>Content-Type:</strong> application/json</p>
                 <p><strong>Input Key:</strong> message</p>
