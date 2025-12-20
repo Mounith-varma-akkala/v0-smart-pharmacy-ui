@@ -150,9 +150,9 @@ export default function PopulateDataPage() {
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold">Smart Pharmacy Data Population</h1>
+          <h1 className="text-4xl font-bold">Pharm Data Population</h1>
           <p className="text-muted-foreground text-lg">
-            Populate your database with realistic data for all smart pharmacy features
+            Populate your database with realistic data for all pharmacy features
           </p>
         </div>
 
@@ -353,7 +353,7 @@ export default function PopulateDataPage() {
           <Alert className="border-green-200 bg-green-50">
             <CheckCircle className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-green-800">
-              <strong>🎉 All features populated successfully!</strong> Your smart pharmacy system is now ready with realistic data. 
+              <strong>🎉 All features populated successfully!</strong> Your pharmacy system is now ready with realistic data. 
               You can now test all features with real data in your dashboard.
             </AlertDescription>
           </Alert>

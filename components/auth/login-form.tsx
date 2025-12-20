@@ -95,10 +95,10 @@ export default function LoginForm() {
             <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
               <Activity className="w-8 h-8" />
             </div>
-            <span className="text-2xl font-normal">Smart Pharma</span>
+            <span className="text-2xl font-normal">Pharm</span>
           </div>
           <h1 className="text-4xl font-normal mb-4 text-balance leading-tight">
-            Welcome Back to Smart Pharmacy Management
+            Welcome Back to Pharm Management
           </h1>
           <p className="text-base text-primary-foreground/80 leading-relaxed font-light">
             Real-time inventory tracking, AI-powered forecasting, and intelligent alerts to help you manage your

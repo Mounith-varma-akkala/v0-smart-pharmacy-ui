@@ -13,7 +13,7 @@ export default function TestFeaturesPage() {
     <DashboardLayout role="admin">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Smart Pharmacy Features Test</h1>
+          <h1 className="text-3xl font-bold">Pharm Features Test</h1>
           <p className="text-muted-foreground">Testing all implemented components and features</p>
         </div>
 
@@ -21,7 +21,7 @@ export default function TestFeaturesPage() {
         <Alert className="border-green-200 bg-green-50">
           <CheckCircle className="h-4 w-4 text-green-600" />
           <AlertDescription className="text-green-800">
-            All smart pharmacy features have been successfully implemented!
+            All pharmacy features have been successfully implemented!
           </AlertDescription>
         </Alert>
 
@@ -84,7 +84,7 @@ export default function TestFeaturesPage() {
         <Card>
           <CardHeader>
             <CardTitle>Implemented Features</CardTitle>
-            <CardDescription>Complete list of smart pharmacy features</CardDescription>
+            <CardDescription>Complete list of pharmacy features</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -112,7 +112,7 @@ export default function TestFeaturesPage() {
         <div className="text-center py-8">
           <h2 className="text-2xl font-bold text-green-600 mb-2">🎉 All Features Implemented!</h2>
           <p className="text-muted-foreground">
-            The Smart Pharmacy Inventory Management System is now complete with all requested features.
+            The Pharm Inventory Management System is now complete with all requested features.
           </p>
         </div>
       </div>

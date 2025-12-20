@@ -89,7 +89,7 @@ export default function SignupForm() {
             <div className="w-16 h-16 rounded-2xl bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center glass">
               <Activity className="w-10 h-10" />
             </div>
-            <span className="text-3xl font-bold">Pharma</span>
+            <span className="text-3xl font-bold">Pharm</span>
           </div>
           <h1 className="text-4xl font-bold mb-6 text-balance">
             Join Thousands of Pharmacies Using AI-Powered Inventory

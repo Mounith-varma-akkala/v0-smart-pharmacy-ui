@@ -84,7 +84,7 @@ export default function LandingPage() {
               <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
                 <Activity className="w-6 h-6 text-primary-foreground" />
               </div>
-              <span className="text-2xl font-bold">Pharma</span>
+              <span className="text-2xl font-bold">Pharm</span>
             </div>
             {/* Left nav links */}
             <div className="hidden md:flex items-center gap-6">
@@ -148,14 +148,14 @@ export default function LandingPage() {
               </motion.div>
             </motion.div>
 
-            {/* Pharma Logo Text */}
+            {/* Pharm Logo Text */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
               className="text-7xl font-bold mb-8 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent"
             >
-              Pharma
+              Pharm
             </motion.h1>
 
             <motion.p
@@ -164,7 +164,7 @@ export default function LandingPage() {
               transition={{ delay: 0.7 }}
               className="text-xl text-muted-foreground max-w-2xl"
             >
-              Next-generation smart pharmacy inventory management
+              Next-generation pharmacy inventory management
             </motion.p>
           </div>
         </div>
@@ -202,9 +202,9 @@ export default function LandingPage() {
                 <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                   <Activity className="w-5 h-5 text-primary-foreground" />
                 </div>
-                <span className="text-xl font-bold">Pharma</span>
+                <span className="text-xl font-bold">Pharm</span>
               </div>
-              <p className="text-sm text-muted-foreground">Smart pharmacy inventory management powered by AI</p>
+            <p className="text-sm text-muted-foreground">Pharmacy inventory management powered by AI</p>
             </div>
             <div>
               <h4 className="font-semibold mb-3">Product</h4>
@@ -268,7 +268,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            <p>© 2025 Pharma. All rights reserved.</p>
+            <p>© 2025 Pharm. All rights reserved.</p>
           </div>
         </div>
       </footer>

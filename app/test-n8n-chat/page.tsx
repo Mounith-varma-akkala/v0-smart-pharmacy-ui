@@ -14,7 +14,7 @@ export default function TestN8nChatPage() {
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold">n8n Chat Integration Test</h1>
         <p className="text-muted-foreground">
-          Test the customized n8n chat widget for Smart Pharmacy
+          Test the customized n8n chat widget for Pharm
         </p>
         <Badge variant="outline" className="text-sm">
           Webhook: https://shyam.mlritcie.in/webhook/6e594a8e-7463-4151-9412-1335015568a3
@@ -89,7 +89,7 @@ export default function TestN8nChatPage() {
         <CardHeader>
           <CardTitle>🔧 Configuration Details</CardTitle>
           <CardDescription>
-            Current n8n chat configuration for Smart Pharmacy
+            Current n8n chat configuration for Pharm
           </CardDescription>
         </CardHeader>
         <CardContent>
