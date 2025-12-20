@@ -84,7 +84,6 @@ export default function ManagerDashboard() {
     return () => {
       supabase.removeChannel(channel)
     }
-    }
   }, [])
 
   return (

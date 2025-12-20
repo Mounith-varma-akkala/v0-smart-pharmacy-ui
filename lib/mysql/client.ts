@@ -1,3 +1,7 @@
+// This file is kept for compatibility but not used since we're using Supabase
+// If you need MySQL integration in the future, uncomment and configure below
+
+/*
 import mysql from 'mysql2/promise'
 
 // MySQL connection configuration
@@ -87,3 +91,22 @@ export async function testConnection() {
 }
 
 export default getPool
+*/
+
+// Placeholder functions for compatibility
+export async function executeQuery(query: string, params: any[] = []) {
+  throw new Error('MySQL is not configured. This app uses Supabase for data storage.')
+}
+
+export async function getConnection() {
+  throw new Error('MySQL is not configured. This app uses Supabase for data storage.')
+}
+
+export async function testConnection() {
+  return { 
+    success: false, 
+    error: 'MySQL is not configured. This app uses Supabase for data storage.' 
+  }
+}
+
+export default null
