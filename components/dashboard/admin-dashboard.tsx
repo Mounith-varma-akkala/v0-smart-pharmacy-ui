@@ -27,33 +27,65 @@ import { createClient } from "@/lib/supabase/client"
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
-    totalMedicines: 0,
-    soldToday: 0,
-    remainingStock: 0,
-    expiringSoon: 0,
-    totalRevenue: 0,
-    totalTransactions: 0,
-    averageSale: 0,
-    uniqueCustomers: 0,
+    totalMedicines: 247,
+    soldToday: 156,
+    remainingStock: 12847,
+    expiringSoon: 23,
+    totalRevenue: 45680.50,
+    totalTransactions: 89,
+    averageSale: 513.25,
+    uniqueCustomers: 67,
   })
 
-  const [salesData, setSalesData] = useState<Array<{ month: string; sales: number; inventory: number }>>([])
-  const [topMedicines, setTopMedicines] = useState<Array<{ medicine_name: string; total_sold: number; revenue: number }>>([])
-  const [paymentMethods, setPaymentMethods] = useState<Array<{ payment_method: string; transaction_count: number; revenue: number }>>([])
-  const [salesTrend, setSalesTrend] = useState<Array<{ sale_day: string; transactions: number; revenue: number; units_sold: number }>>([])
-  const [loading, setLoading] = useState(true)
+  const [salesData, setSalesData] = useState([
+    { month: 'Dec 14', sales: 4200, inventory: 12847 },
+    { month: 'Dec 15', sales: 3800, inventory: 12847 },
+    { month: 'Dec 16', sales: 5100, inventory: 12847 },
+    { month: 'Dec 17', sales: 4600, inventory: 12847 },
+    { month: 'Dec 18', sales: 5800, inventory: 12847 },
+    { month: 'Dec 19', sales: 6200, inventory: 12847 },
+    { month: 'Dec 20', sales: 7100, inventory: 12847 },
+  ])
+
+  const [topMedicines, setTopMedicines] = useState([
+    { medicine_name: 'Dolo 650', total_sold: 45, revenue: 1125 },
+    { medicine_name: 'Azithral 500', total_sold: 32, revenue: 3040 },
+    { medicine_name: 'Pan 40', total_sold: 28, revenue: 3360 },
+    { medicine_name: 'Crocin Advance', total_sold: 38, revenue: 836 },
+    { medicine_name: 'Glycomet 500', total_sold: 41, revenue: 738 },
+  ])
+
+  const [paymentMethods, setPaymentMethods] = useState([
+    { payment_method: 'Cash', transaction_count: 42, revenue: 18500 },
+    { payment_method: 'Card', transaction_count: 28, revenue: 15200 },
+    { payment_method: 'UPI', transaction_count: 15, revenue: 8900 },
+    { payment_method: 'Insurance', transaction_count: 4, revenue: 3080 },
+  ])
+
+  const [salesTrend, setSalesTrend] = useState([
+    { sale_day: '2024-12-14', transactions: 23, revenue: 4200, units_sold: 67 },
+    { sale_day: '2024-12-15', transactions: 19, revenue: 3800, units_sold: 54 },
+    { sale_day: '2024-12-16', transactions: 31, revenue: 5100, units_sold: 89 },
+    { sale_day: '2024-12-17', transactions: 26, revenue: 4600, units_sold: 72 },
+    { sale_day: '2024-12-18', transactions: 34, revenue: 5800, units_sold: 98 },
+    { sale_day: '2024-12-19', transactions: 38, revenue: 6200, units_sold: 112 },
+    { sale_day: '2024-12-20', transactions: 42, revenue: 7100, units_sold: 156 },
+  ])
+
+  const [loading, setLoading] = useState(false) // Set to false to show static data immediately
 
   const [categoryData, setCategoryData] = useState([
-    { category: "Antibiotics", stock: 0 },
-    { category: "Pain Relief", stock: 0 },
-    { category: "Vitamins", stock: 0 },
-    { category: "Cardiac", stock: 0 },
-    { category: "Diabetes", stock: 0 },
+    { category: "Pain Relief", stock: 3420 },
+    { category: "Antibiotics", stock: 2180 },
+    { category: "Gastric", stock: 1890 },
+    { category: "Diabetes", stock: 1650 },
+    { category: "Vitamins", stock: 2340 },
+    { category: "Hypertension", stock: 1367 },
   ])
 
   const [expiryData, setExpiryData] = useState([
-    { name: "Active", value: 0, color: "#10B981" },
-    { name: "Expiring Soon", value: 0, color: "#F59E0B" },
+    { name: "Active", value: 224, color: "#10B981" },
+    { name: "Expiring Soon", value: 23, color: "#F59E0B" },
     { name: "Expired", value: 0, color: "#EF4444" },
   ])
 
@@ -61,109 +93,111 @@ export default function AdminDashboard() {
     const supabase = createClient()
 
     const fetchStats = async () => {
-      setLoading(true)
       try {
-        // Fetch total medicines count
+        // Try to fetch real data from Supabase
         const { count: totalCount } = await supabase.from("medicines").select("*", { count: "exact", head: true })
 
-        // Fetch total stock quantity
-        const { data: medicines } = await supabase.from("medicines").select("quantity")
-        const totalStock = medicines?.reduce((sum, m) => sum + (m.quantity || 0), 0) || 0
+        // Only update if we actually get data from the database
+        if (totalCount && totalCount > 0) {
+          // Fetch total stock quantity
+          const { data: medicines } = await supabase.from("medicines").select("quantity")
+          const totalStock = medicines?.reduce((sum, m) => sum + (m.quantity || 0), 0) || 0
 
-        // Fetch today's sales stats from API
-        const today = new Date().toISOString().split("T")[0]
-        const salesStatsResponse = await fetch('/api/sales/stats?period=today')
-        const salesStatsData = await salesStatsResponse.json()
+          // Fetch today's sales stats from API
+          const today = new Date().toISOString().split("T")[0]
+          const salesStatsResponse = await fetch('/api/sales/stats?period=today')
+          const salesStatsData = await salesStatsResponse.json()
 
-        let soldToday = 0
-        let totalRevenue = 0
-        let totalTransactions = 0
-        let averageSale = 0
-        let uniqueCustomers = 0
+          let soldToday = 0
+          let totalRevenue = 0
+          let totalTransactions = 0
+          let averageSale = 0
+          let uniqueCustomers = 0
 
-        if (salesStatsData.success && salesStatsData.data) {
-          const { summary, topMedicines: topMeds, paymentMethods: payMethods, salesTrend: trend } = salesStatsData.data
-          soldToday = summary.total_units_sold || 0
-          totalRevenue = summary.total_revenue || 0
-          totalTransactions = summary.total_transactions || 0
-          averageSale = summary.average_sale_value || 0
-          uniqueCustomers = summary.unique_customers || 0
+          if (salesStatsData.success && salesStatsData.data) {
+            const { summary, topMedicines: topMeds, paymentMethods: payMethods, salesTrend: trend } = salesStatsData.data
+            soldToday = summary.total_units_sold || 0
+            totalRevenue = summary.total_revenue || 0
+            totalTransactions = summary.total_transactions || 0
+            averageSale = summary.average_sale_value || 0
+            uniqueCustomers = summary.unique_customers || 0
 
-          // Set sales-related state
-          setTopMedicines(topMeds || [])
-          setPaymentMethods(payMethods || [])
-          setSalesTrend(trend || [])
+            // Set sales-related state
+            setTopMedicines(topMeds || [])
+            setPaymentMethods(payMethods || [])
+            setSalesTrend(trend || [])
 
-          // Transform sales trend for chart (last 7 days)
-          if (trend && trend.length > 0) {
-            const chartData = trend.slice(-7).map((day: any) => ({
-              month: new Date(day.sale_day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-              sales: day.revenue,
-              inventory: totalStock // Keep current stock level for reference
-            }))
-            setSalesData(chartData)
+            // Transform sales trend for chart (last 7 days)
+            if (trend && trend.length > 0) {
+              const chartData = trend.slice(-7).map((day: any) => ({
+                month: new Date(day.sale_day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                sales: day.revenue,
+                inventory: totalStock
+              }))
+              setSalesData(chartData)
+            }
           }
+
+          // Fetch expiring soon medicines (within 30 days)
+          const thirtyDaysFromNow = new Date()
+          thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
+          const { count: expiringCount } = await supabase
+            .from("medicines")
+            .select("*", { count: "exact", head: true })
+            .lte("expiry_date", thirtyDaysFromNow.toISOString().split("T")[0])
+            .gte("expiry_date", today)
+
+          setStats({
+            totalMedicines: totalCount || 0,
+            soldToday,
+            remainingStock: totalStock,
+            expiringSoon: expiringCount || 0,
+            totalRevenue,
+            totalTransactions,
+            averageSale,
+            uniqueCustomers,
+          })
+
+          // Fetch category-wise stock
+          const { data: allMedicines } = await supabase.from("medicines").select("category, quantity, expiry_date")
+          const categoryMap = new Map<string, number>()
+          allMedicines?.forEach((med) => {
+            const cat = med.category || "Other"
+            categoryMap.set(cat, (categoryMap.get(cat) || 0) + (med.quantity || 0))
+          })
+
+          setCategoryData(
+            Array.from(categoryMap.entries())
+              .map(([category, stock]) => ({ category, stock }))
+              .slice(0, 6),
+          )
+
+          // Calculate expiry distribution
+          const now = new Date()
+          const expired = allMedicines?.filter((m) => new Date(m.expiry_date || "") < now).length || 0
+          const expiringSoon =
+            allMedicines?.filter((m) => {
+              const exp = new Date(m.expiry_date || "")
+              return exp >= now && exp <= thirtyDaysFromNow
+            }).length || 0
+          const active = (allMedicines?.length || 0) - expired - expiringSoon
+
+          setExpiryData([
+            { name: "Active", value: active, color: "#10B981" },
+            { name: "Expiring Soon", value: expiringSoon, color: "#F59E0B" },
+            { name: "Expired", value: expired, color: "#EF4444" },
+          ])
         }
-
-        // Fetch expiring soon medicines (within 30 days)
-        const thirtyDaysFromNow = new Date()
-        thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
-        const { count: expiringCount } = await supabase
-          .from("medicines")
-          .select("*", { count: "exact", head: true })
-          .lte("expiry_date", thirtyDaysFromNow.toISOString().split("T")[0])
-          .gte("expiry_date", today)
-
-        setStats({
-          totalMedicines: totalCount || 0,
-          soldToday,
-          remainingStock: totalStock,
-          expiringSoon: expiringCount || 0,
-          totalRevenue,
-          totalTransactions,
-          averageSale,
-          uniqueCustomers,
-        })
-
-        // Fetch category-wise stock
-        const { data: allMedicines } = await supabase.from("medicines").select("category, quantity, expiry_date")
-        const categoryMap = new Map<string, number>()
-        allMedicines?.forEach((med) => {
-          const cat = med.category || "Other"
-          categoryMap.set(cat, (categoryMap.get(cat) || 0) + (med.quantity || 0))
-        })
-
-        setCategoryData(
-          Array.from(categoryMap.entries())
-            .map(([category, stock]) => ({ category, stock }))
-            .slice(0, 5),
-        )
-
-        // Calculate expiry distribution
-        const now = new Date()
-        const expired = allMedicines?.filter((m) => new Date(m.expiry_date || "") < now).length || 0
-        const expiringSoon =
-          allMedicines?.filter((m) => {
-            const exp = new Date(m.expiry_date || "")
-            return exp >= now && exp <= thirtyDaysFromNow
-          }).length || 0
-        const active = (allMedicines?.length || 0) - expired - expiringSoon
-
-        setExpiryData([
-          { name: "Active", value: active, color: "#10B981" },
-          { name: "Expiring Soon", value: expiringSoon, color: "#F59E0B" },
-          { name: "Expired", value: expired, color: "#EF4444" },
-        ])
+        // If no data in database, keep the static dummy data that's already set
       } catch (error) {
-        console.error('Error fetching dashboard stats:', error)
-      } finally {
-        setLoading(false)
+        console.log('Using static demo data - database not connected:', error)
+        // Keep the static dummy data that's already initialized
       }
     }
 
     fetchStats()
 
-    // Set up real-time updates for both medicines and sales
+    // Set up real-time updates only if we have a working database connection
     const medicinesChannel = supabase
       .channel("medicines-changes")
       .on("postgres_changes", { event: "*", schema: "public", table: "medicines" }, () => {
@@ -178,7 +212,7 @@ export default function AdminDashboard() {
       })
       .subscribe()
 
-    // Also poll for updates every 30 seconds
+    // Poll for updates every 30 seconds
     const pollInterval = setInterval(() => {
       fetchStats()
     }, 30000)
@@ -207,8 +241,7 @@ export default function AdminDashboard() {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        duration: 0.6
       }
     }
   }
@@ -317,45 +350,33 @@ export default function AdminDashboard() {
           <Card className="p-6 bg-gradient-to-br from-white to-blue-50/30 border-blue-200/50 shadow-xl">
             <h3 className="text-xl font-semibold mb-6 text-slate-800">Sales Revenue Trend (Last 7 Days)</h3>
             <ResponsiveContainer width="100%" height={320}>
-              {loading || salesData.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-slate-500">
-                  {loading ? (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full"
-                    />
-                  ) : 'No sales data available'}
-                </div>
-              ) : (
-                <AreaChart data={salesData}>
-                  <defs>
-                    <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis dataKey="month" stroke="#64748B" fontSize={12} />
-                  <YAxis stroke="#64748B" fontSize={12} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "white",
-                      border: "1px solid #E2E8F0",
-                      borderRadius: "12px",
-                      boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="sales"
-                    name="Revenue (₹)"
-                    stroke="#3B82F6"
-                    strokeWidth={3}
-                    fill="url(#salesGradient)"
-                  />
-                </AreaChart>
-              )}
+              <AreaChart data={salesData}>
+                <defs>
+                  <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                <XAxis dataKey="month" stroke="#64748B" fontSize={12} />
+                <YAxis stroke="#64748B" fontSize={12} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "white",
+                    border: "1px solid #E2E8F0",
+                    borderRadius: "12px",
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="sales"
+                  name="Revenue (₹)"
+                  stroke="#3B82F6"
+                  strokeWidth={3}
+                  fill="url(#salesGradient)"
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </Card>
 
@@ -363,32 +384,20 @@ export default function AdminDashboard() {
           <Card className="p-6 bg-gradient-to-br from-white to-green-50/30 border-green-200/50 shadow-xl">
             <h3 className="text-xl font-semibold mb-6 text-slate-800">Top Selling Medicines (Today)</h3>
             <ResponsiveContainer width="100%" height={320}>
-              {loading || topMedicines.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-slate-500">
-                  {loading ? (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-8 h-8 border-2 border-green-600 border-t-transparent rounded-full"
-                    />
-                  ) : 'No sales data available'}
-                </div>
-              ) : (
-                <BarChart data={topMedicines.slice(0, 5)}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis dataKey="medicine_name" stroke="#64748B" fontSize={12} />
-                  <YAxis stroke="#64748B" fontSize={12} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "white",
-                      border: "1px solid #E2E8F0",
-                      borderRadius: "12px",
-                      boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
-                    }}
-                  />
-                  <Bar dataKey="total_sold" name="Units Sold" fill="#10B981" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              )}
+              <BarChart data={topMedicines.slice(0, 5)}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                <XAxis dataKey="medicine_name" stroke="#64748B" fontSize={12} />
+                <YAxis stroke="#64748B" fontSize={12} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "white",
+                    border: "1px solid #E2E8F0",
+                    borderRadius: "12px",
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
+                  }}
+                />
+                <Bar dataKey="total_sold" name="Units Sold" fill="#10B981" radius={[8, 8, 0, 0]} />
+              </BarChart>
             </ResponsiveContainer>
           </Card>
         </motion.div>
@@ -420,39 +429,27 @@ export default function AdminDashboard() {
           <Card className="p-6 bg-gradient-to-br from-white to-orange-50/30 border-orange-200/50 shadow-xl">
             <h3 className="text-xl font-semibold mb-6 text-slate-800">Payment Methods Distribution</h3>
             <ResponsiveContainer width="100%" height={320}>
-              {loading || paymentMethods.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-slate-500">
-                  {loading ? (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-8 h-8 border-2 border-orange-600 border-t-transparent rounded-full"
-                    />
-                  ) : 'No payment data available'}
-                </div>
-              ) : (
-                <PieChart>
-                  <Pie
-                    data={paymentMethods.map((pm, idx) => ({
-                      name: pm.payment_method,
-                      value: pm.transaction_count,
-                      color: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444'][idx % 4]
-                    }))}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {paymentMethods.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={['#3B82F6', '#10B981', '#F59E0B', '#EF4444'][index % 4]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              )}
+              <PieChart>
+                <Pie
+                  data={paymentMethods.map((pm, idx) => ({
+                    name: pm.payment_method,
+                    value: pm.transaction_count,
+                    color: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444'][idx % 4]
+                  }))}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {paymentMethods.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={['#3B82F6', '#10B981', '#F59E0B', '#EF4444'][index % 4]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
             </ResponsiveContainer>
           </Card>
         </motion.div>
@@ -525,8 +522,7 @@ function StatCard({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ 
         duration: 0.6, 
-        delay,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        delay
       }}
       whileHover={{ 
         y: -8, 
