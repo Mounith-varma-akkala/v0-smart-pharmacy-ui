@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Bot, X, Send, Loader2 } from "lucide-react"
+import { Bot, X, Send, Loader2, ChevronDown, ChevronRight } from "lucide-react"
 
 interface Message {
   id: number
@@ -15,6 +15,95 @@ interface Message {
   sender: "user" | "bot"
   timestamp: Date
   isLoading?: boolean
+  responseData?: any // For structured JSON data
+  isJsonResponse?: boolean
+}
+
+// Component to render JSON responses nicely
+function JsonResponseRenderer({ data }: { data: any }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  if (!data || typeof data !== 'object') {
+    return null
+  }
+
+  const renderValue = (value: any, key?: string): React.ReactNode => {
+    if (value === null) return <span className="text-gray-500">null</span>
+    if (typeof value === 'boolean') return <span className="text-blue-600">{value.toString()}</span>
+    if (typeof value === 'number') return <span className="text-green-600">{value}</span>
+    if (typeof value === 'string') {
+      // If it's a long string, truncate it
+      if (value.length > 100) {
+        return (
+          <div>
+            <span className="text-gray-800">{value.substring(0, 100)}...</span>
+            <button 
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-blue-500 hover:text-blue-700 ml-2 text-xs"
+            >
+              {isExpanded ? 'Show less' : 'Show more'}
+            </button>
+            {isExpanded && (
+              <div className="mt-2 p-2 bg-gray-50 rounded text-sm">
+                {value}
+              </div>
+            )}
+          </div>
+        )
+      }
+      return <span className="text-gray-800">"{value}"</span>
+    }
+    if (Array.isArray(value)) {
+      return (
+        <div className="ml-4">
+          <span className="text-gray-600">[</span>
+          {value.map((item, index) => (
+            <div key={index} className="ml-2">
+              {renderValue(item)}
+              {index < value.length - 1 && <span className="text-gray-600">,</span>}
+            </div>
+          ))}
+          <span className="text-gray-600">]</span>
+        </div>
+      )
+    }
+    if (typeof value === 'object') {
+      return (
+        <div className="ml-4">
+          <span className="text-gray-600">{"{"}</span>
+          {Object.entries(value).map(([k, v], index, arr) => (
+            <div key={k} className="ml-2">
+              <span className="text-purple-600">"{k}"</span>
+              <span className="text-gray-600">: </span>
+              {renderValue(v, k)}
+              {index < arr.length - 1 && <span className="text-gray-600">,</span>}
+            </div>
+          ))}
+          <span className="text-gray-600">{"}"}</span>
+        </div>
+      )
+    }
+    return <span>{String(value)}</span>
+  }
+
+  return (
+    <div className="mt-3 p-3 bg-gray-50 rounded-lg border">
+      <div className="flex items-center gap-2 mb-2">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-gray-900"
+        >
+          {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+          Structured Response
+        </button>
+      </div>
+      {isExpanded && (
+        <div className="font-mono text-sm overflow-x-auto">
+          {renderValue(data)}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function ChatBot() {
@@ -22,7 +111,7 @@ export default function ChatBot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "Hello! I'm your AI pharmacy assistant. I can help you with medicine information, stock queries, health advice, and more. How can I assist you today?",
+      text: "Hello! I'm your AI pharmacy assistant. I can help you with medicine information, stock queries, health advice, and more. How can I assist you today?\n\nNote: I will wait for the AI to fully process your request, so responses may take a moment.",
       sender: "bot",
       timestamp: new Date(),
     },
@@ -49,7 +138,7 @@ export default function ChatBot() {
     // Add loading message
     const loadingMessage: Message = {
       id: Date.now() + 1,
-      text: "Processing your request...",
+      text: "Processing your request... Please wait for the AI to respond.",
       sender: "bot",
       timestamp: new Date(),
       isLoading: true,
@@ -89,6 +178,8 @@ export default function ChatBot() {
           text: data.response || data.error || 'I apologize, but I encountered an issue. Please try again.',
           sender: "bot",
           timestamp: new Date(),
+          responseData: data.responseData, // Include structured data if available
+          isJsonResponse: data.isJsonResponse
         }
         return [...withoutLoading, botResponse]
       })
@@ -167,7 +258,13 @@ export default function ChatBot() {
                         {message.isLoading && (
                           <Loader2 className="w-4 h-4 animate-spin" />
                         )}
-                        <p className="text-sm">{message.text}</p>
+                        <div className="flex-1">
+                          <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                          {/* Render structured JSON data if available */}
+                          {message.responseData && message.isJsonResponse && (
+                            <JsonResponseRenderer data={message.responseData} />
+                          )}
+                        </div>
                       </div>
                       <p className="text-xs opacity-70 mt-1">
                         {message.timestamp.toLocaleTimeString([], {

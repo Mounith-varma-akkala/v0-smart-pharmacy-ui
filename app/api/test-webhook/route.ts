@@ -8,9 +8,7 @@ export async function POST(request: NextRequest) {
     
     console.log('Testing webhook with message:', message)
     
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 15000) // 15 second timeout
-
+    // No timeout - wait indefinitely for webhook response
     const webhookResponse = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: {
@@ -21,19 +19,21 @@ export async function POST(request: NextRequest) {
         message: message || 'Hello, this is a test message',
         timestamp: new Date().toISOString(),
         source: 'webhook-test'
-      }),
-      signal: controller.signal
+      })
+      // No timeout - wait as long as needed
     })
-
-    clearTimeout(timeoutId)
 
     const responseText = await webhookResponse.text()
     
     let parsedResponse
+    let isJsonResponse = false
+    
     try {
       parsedResponse = JSON.parse(responseText)
+      isJsonResponse = true
     } catch {
       parsedResponse = responseText
+      isJsonResponse = false
     }
 
     return NextResponse.json({
@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
       webhookHeaders: Object.fromEntries(webhookResponse.headers.entries()),
       rawResponse: responseText,
       parsedResponse: parsedResponse,
+      isJsonResponse: isJsonResponse,
       timestamp: new Date().toISOString()
     })
 
