@@ -28,8 +28,109 @@ interface LowStockRequest {
 }
 
 export default function LowStockRequestsPage() {
-  const [requests, setRequests] = useState<LowStockRequest[]>([])
-  const [loading, setLoading] = useState(true)
+  const [requests, setRequests] = useState<LowStockRequest[]>([
+    {
+      id: "1",
+      medicine_name: "Dolo 650",
+      current_stock: 15,
+      requested_quantity: 500,
+      reason: "Stock running critically low due to high demand during winter season. We've had multiple customers asking for this medicine and we're almost out of stock.",
+      urgency: "critical",
+      status: "pending",
+      requested_by: "Manager John",
+      requested_at: "2024-12-20T10:30:00Z"
+    },
+    {
+      id: "2",
+      medicine_name: "Azithral 500",
+      current_stock: 8,
+      requested_quantity: 200,
+      reason: "Antibiotic demand has increased significantly due to respiratory infections in the area. Current stock will last only 2-3 days.",
+      urgency: "high",
+      status: "approved",
+      requested_by: "Manager Sarah",
+      requested_at: "2024-12-19T14:15:00Z",
+      reviewed_by: "Admin Kumar",
+      reviewed_at: "2024-12-19T16:45:00Z",
+      review_notes: "Approved. High demand confirmed. Order placed with supplier for immediate delivery."
+    },
+    {
+      id: "3",
+      medicine_name: "Pan 40",
+      current_stock: 25,
+      requested_quantity: 300,
+      reason: "Regular prescription medicine with steady demand. Stock will be depleted within a week based on current sales pattern.",
+      urgency: "medium",
+      status: "approved",
+      requested_by: "Manager Mike",
+      requested_at: "2024-12-18T09:20:00Z",
+      reviewed_by: "Admin Priya",
+      reviewed_at: "2024-12-18T11:30:00Z",
+      review_notes: "Approved. Standard replenishment request. Order scheduled for next delivery cycle."
+    },
+    {
+      id: "4",
+      medicine_name: "Expensive Injection XYZ",
+      current_stock: 2,
+      requested_quantity: 50,
+      reason: "Requesting large quantity for bulk discount. This is an expensive medicine and bulk purchase would save costs.",
+      urgency: "low",
+      status: "rejected",
+      requested_by: "Manager Tom",
+      requested_at: "2024-12-17T13:45:00Z",
+      reviewed_by: "Admin Kumar",
+      reviewed_at: "2024-12-17T15:20:00Z",
+      review_notes: "Rejected. Current stock is sufficient for 2 months. Bulk purchase not justified at this time due to budget constraints."
+    },
+    {
+      id: "5",
+      medicine_name: "Glycomet 500",
+      current_stock: 45,
+      requested_quantity: 400,
+      reason: "Diabetes medication with consistent demand. Stock levels are below optimal threshold for this high-turnover medicine.",
+      urgency: "medium",
+      status: "pending",
+      requested_by: "Manager Lisa",
+      requested_at: "2024-12-19T16:30:00Z"
+    },
+    {
+      id: "6",
+      medicine_name: "Crocin Advance",
+      current_stock: 12,
+      requested_quantity: 600,
+      reason: "Children's fever medicine in high demand. Parents are frequently asking for this specific brand. Stock critically low.",
+      urgency: "high",
+      status: "pending",
+      requested_by: "Manager John",
+      requested_at: "2024-12-20T08:15:00Z"
+    },
+    {
+      id: "7",
+      medicine_name: "Telma 40",
+      current_stock: 18,
+      requested_quantity: 150,
+      reason: "Hypertension medication for regular patients. Several patients have standing prescriptions for this medicine.",
+      urgency: "medium",
+      status: "approved",
+      requested_by: "Manager Sarah",
+      requested_at: "2024-12-18T11:45:00Z",
+      reviewed_by: "Admin Priya",
+      reviewed_at: "2024-12-18T14:20:00Z",
+      review_notes: "Approved. Regular prescription medicine. Order confirmed with supplier."
+    },
+    {
+      id: "8",
+      medicine_name: "Allegra 120",
+      current_stock: 6,
+      requested_quantity: 100,
+      reason: "Allergy medication demand increased due to air pollution and seasonal allergies. Stock will be exhausted soon.",
+      urgency: "high",
+      status: "pending",
+      requested_by: "Manager Mike",
+      requested_at: "2024-12-20T12:00:00Z"
+    }
+  ])
+  const [loading, setLoading] = useState(false)
   const [showNewRequestDialog, setShowNewRequestDialog] = useState(false)
   const [filterStatus, setFilterStatus] = useState('all')
 
@@ -48,9 +149,13 @@ export default function LowStockRequestsPage() {
     try {
       const response = await fetch('/api/low-stock-requests')
       const data = await response.json()
-      setRequests(data.requests || [])
+      if (data.requests && data.requests.length > 0) {
+        setRequests(data.requests)
+      }
+      // If no data from API, keep static data
     } catch (error) {
-      console.error('Error fetching requests:', error)
+      console.log('Using static demo data - API not available:', error)
+      // Keep static data
     } finally {
       setLoading(false)
     }

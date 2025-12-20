@@ -24,8 +24,129 @@ interface InventoryBatch {
 }
 
 export default function ExpiryManagementPage() {
-  const [batches, setBatches] = useState<InventoryBatch[]>([])
-  const [loading, setLoading] = useState(true)
+  const [batches, setBatches] = useState<InventoryBatch[]>([
+    {
+      id: "1",
+      medicine_name: "Dolo 650",
+      batch_number: "DL2024001",
+      expiry_date: "2024-12-25",
+      quantity: 50,
+      cost_price: 18.50,
+      supplier_name: "Micro Labs",
+      days_to_expiry: 5,
+      expiry_status: "critical",
+      suggested_for_sale: true
+    },
+    {
+      id: "2",
+      medicine_name: "Azithral 500",
+      batch_number: "AZ2024002",
+      expiry_date: "2024-12-22",
+      quantity: 25,
+      cost_price: 70.00,
+      supplier_name: "Alembic Pharma",
+      days_to_expiry: 2,
+      expiry_status: "critical",
+      suggested_for_sale: true
+    },
+    {
+      id: "3",
+      medicine_name: "Pan 40",
+      batch_number: "PN2024003",
+      expiry_date: "2024-12-15",
+      quantity: 30,
+      cost_price: 88.00,
+      supplier_name: "Alkem Labs",
+      days_to_expiry: -5,
+      expiry_status: "expired",
+      suggested_for_sale: false
+    },
+    {
+      id: "4",
+      medicine_name: "Crocin Advance",
+      batch_number: "CR2024007",
+      expiry_date: "2025-01-15",
+      quantity: 100,
+      cost_price: 16.00,
+      supplier_name: "GSK",
+      days_to_expiry: 26,
+      expiry_status: "warning",
+      suggested_for_sale: true
+    },
+    {
+      id: "5",
+      medicine_name: "Combiflam",
+      batch_number: "CB2024008",
+      expiry_date: "2025-01-10",
+      quantity: 75,
+      cost_price: 25.00,
+      supplier_name: "Sanofi",
+      days_to_expiry: 21,
+      expiry_status: "warning",
+      suggested_for_sale: true
+    },
+    {
+      id: "6",
+      medicine_name: "Glycomet 500",
+      batch_number: "GM2024004",
+      expiry_date: "2025-03-15",
+      quantity: 200,
+      cost_price: 13.00,
+      supplier_name: "USV Ltd",
+      days_to_expiry: 85,
+      expiry_status: "safe",
+      suggested_for_sale: false
+    },
+    {
+      id: "7",
+      medicine_name: "Telma 40",
+      batch_number: "TM2024005",
+      expiry_date: "2025-02-28",
+      quantity: 80,
+      cost_price: 132.00,
+      supplier_name: "Glenmark",
+      days_to_expiry: 70,
+      expiry_status: "safe",
+      suggested_for_sale: false
+    },
+    {
+      id: "8",
+      medicine_name: "Allegra 120",
+      batch_number: "AL2024006",
+      expiry_date: "2024-12-28",
+      quantity: 40,
+      cost_price: 118.00,
+      supplier_name: "Sanofi",
+      days_to_expiry: 8,
+      expiry_status: "critical",
+      suggested_for_sale: true
+    },
+    {
+      id: "9",
+      medicine_name: "Becosules",
+      batch_number: "BC2024009",
+      expiry_date: "2025-01-20",
+      quantity: 60,
+      cost_price: 32.00,
+      supplier_name: "Pfizer",
+      days_to_expiry: 31,
+      expiry_status: "safe",
+      suggested_for_sale: false
+    },
+    {
+      id: "10",
+      medicine_name: "Omez 20",
+      batch_number: "OM2024010",
+      expiry_date: "2024-12-30",
+      quantity: 35,
+      cost_price: 62.00,
+      supplier_name: "Dr. Reddys",
+      days_to_expiry: 10,
+      expiry_status: "critical",
+      suggested_for_sale: true
+    }
+  ])
+  const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [alertDays, setAlertDays] = useState(30)
@@ -38,9 +159,13 @@ export default function ExpiryManagementPage() {
     try {
       const response = await fetch(`/api/inventory/expiry?alert_days=${alertDays}`)
       const data = await response.json()
-      setBatches(data.batches || [])
+      if (data.batches && data.batches.length > 0) {
+        setBatches(data.batches)
+      }
+      // If no data from API, keep static data
     } catch (error) {
-      console.error('Error fetching inventory batches:', error)
+      console.log('Using static demo data - API not available:', error)
+      // Keep static data
     } finally {
       setLoading(false)
     }

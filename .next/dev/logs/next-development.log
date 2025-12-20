@@ -22,3 +22,46 @@
 [01:34:04.784] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/import-json-data color: rgb(120, 120, 120) color: inherit {"dp":"/import-json-data","o":"http://localhost:3001/import-json-data","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766208103274}
 [01:59:47.908] Server  LOG      ✓ Compiled in 287ms
 [02:01:52.418] Server  LOG      ✓ Compiled in 151ms
+[02:03:18.210] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:03:18.367] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[02:03:18.367] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/login","route":"/login"}
+[02:03:18.367] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://localhost:3001/login","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766209856858}
+[02:03:27.130] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/admin/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/admin/dashboard","o":"http://localhost:3001/admin/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766209865552}
+[02:03:28.182] Server  ERROR   Sales query error: {}
+[02:03:28.183] Server  ERROR   Sales Stats API Error: {}
+[02:03:28.737] Server  ERROR   Sales query error: {}
+[02:03:28.737] Server  ERROR   Sales Stats API Error: {}
+[02:03:40.648] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/admin/suppliers color: rgb(120, 120, 120) color: inherit {"dp":"/admin/suppliers","o":"http://localhost:3001/admin/suppliers","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766209879126}
+[02:03:41.240] Server  ERROR   Error fetching suppliers: {}
+[02:03:41.784] Server  ERROR   Error fetching suppliers: {}
+[02:03:43.415] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/admin/expiry-management color: rgb(120, 120, 120) color: inherit {"dp":"/admin/expiry-management","o":"http://localhost:3001/admin/expiry-management","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766209881897}
+[02:03:43.991] Server  ERROR   Error fetching inventory batches: {}
+[02:03:44.535] Server  ERROR   Error fetching inventory batches: {}
+[02:03:45.080] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/admin/price-forecasting color: rgb(120, 120, 120) color: inherit {"dp":"/admin/price-forecasting","o":"http://localhost:3001/admin/price-forecasting","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766209883561}
+[02:03:45.637] Server  ERROR   Error generating price forecasts: {}
+[02:03:46.190] Server  ERROR   Error generating price forecasts: {}
+[02:03:47.184] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/admin/demand-analysis color: rgb(120, 120, 120) color: inherit {"dp":"/admin/demand-analysis","o":"http://localhost:3001/admin/demand-analysis","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766209885663}
+[02:03:47.819] Server  ERROR   Error generating sales heatmap: {}
+[02:03:47.829] Server  ERROR   Error analyzing demand patterns: {}
+[02:03:48.507] Server  ERROR   Error generating sales heatmap: {}
+[02:03:48.529] Server  ERROR   Error analyzing demand patterns: {}
+[02:03:48.609] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3001/admin/inventory color: rgb(120, 120, 120) color: inherit {"dp":"/admin/inventory","o":"http://localhost:3001/admin/inventory","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766209887091}
+[02:11:27.106] Server  LOG      ✓ Compiled in 157ms
+[02:11:59.741] Server  LOG      ✓ Compiled in 80ms
+[02:12:12.818] Server  LOG      ✓ Compiled in 76ms
+[02:12:23.013] Server  LOG      ✓ Compiled in 75ms
+[02:12:33.495] Server  LOG      ✓ Compiled in 77ms
+[02:15:58.307] Server  LOG      ✓ Compiled in 86ms
+[02:16:03.380] Server  LOG      ✓ Compiled in 78ms
+[02:16:16.095] Server  LOG      ✓ Compiled in 73ms
+[02:16:20.924] Server  LOG      ✓ Compiled in 73ms
+[02:21:11.487] Server  LOG      ✓ Compiled in 135ms
+[02:21:20.177] Server  LOG      ✓ Compiled in 75ms
+[02:21:37.991] Server  LOG      ✓ Compiled in 75ms
+[02:21:45.432] Server  LOG      ✓ Compiled in 77ms
+[02:22:00.905] Server  LOG      ✓ Compiled in 81ms
+[02:22:07.417] Server  LOG      ✓ Compiled in 77ms
+[02:22:48.036] Server  LOG      ✓ Compiled in 86ms
+[02:22:57.564] Server  LOG      ✓ Compiled in 81ms
+[02:23:21.436] Server  LOG      ✓ Compiled in 111ms
+[02:23:27.893] Server  LOG      ✓ Compiled in 90ms

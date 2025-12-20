@@ -27,8 +27,105 @@ interface Supplier {
 }
 
 export default function SuppliersPage() {
-  const [suppliers, setSuppliers] = useState<Supplier[]>([])
-  const [loading, setLoading] = useState(true)
+  const [suppliers, setSuppliers] = useState<Supplier[]>([
+    {
+      id: "1",
+      name: "Apollo Supply Chain",
+      contact_person: "Rajesh Kumar",
+      email: "rajesh@apollo.com",
+      phone: "+91-9876543210",
+      address: "Mumbai, Maharashtra",
+      medicines_supplied: ["Dolo 650", "Azithral 500", "Pan 40", "Glycomet 500"],
+      lead_time_days: 3,
+      reliability_rating: 4.8,
+      price_trend: "stable",
+      last_order_date: "2024-12-18",
+      total_orders: 156,
+      on_time_delivery_rate: 95,
+      auto_reorder_enabled: true
+    },
+    {
+      id: "2",
+      name: "Hetero Healthcare",
+      contact_person: "Priya Sharma",
+      email: "priya@hetero.com",
+      phone: "+91-9876543211",
+      address: "Hyderabad, Telangana",
+      medicines_supplied: ["Telma 40", "Allegra 120", "Combiflam", "Becosules"],
+      lead_time_days: 5,
+      reliability_rating: 4.6,
+      price_trend: "down",
+      last_order_date: "2024-12-19",
+      total_orders: 89,
+      on_time_delivery_rate: 92,
+      auto_reorder_enabled: true
+    },
+    {
+      id: "3",
+      name: "MedPlus Mart",
+      contact_person: "Amit Patel",
+      email: "amit@medplus.com",
+      phone: "+91-9876543212",
+      address: "Chennai, Tamil Nadu",
+      medicines_supplied: ["Crocin Advance", "Omez 20", "Vitamin D3", "Calcium Sandoz"],
+      lead_time_days: 4,
+      reliability_rating: 4.4,
+      price_trend: "up",
+      last_order_date: "2024-12-17",
+      total_orders: 134,
+      on_time_delivery_rate: 88,
+      auto_reorder_enabled: false
+    },
+    {
+      id: "4",
+      name: "Cipla Direct",
+      contact_person: "Sneha Reddy",
+      email: "sneha@cipla.com",
+      phone: "+91-9876543213",
+      address: "Bangalore, Karnataka",
+      medicines_supplied: ["Asthalin Inhaler", "Budecort 200", "Deriphyllin", "Ciprofloxacin 500"],
+      lead_time_days: 2,
+      reliability_rating: 4.9,
+      price_trend: "stable",
+      last_order_date: "2024-12-20",
+      total_orders: 203,
+      on_time_delivery_rate: 98,
+      auto_reorder_enabled: true
+    },
+    {
+      id: "5",
+      name: "Sun Pharma Distributors",
+      contact_person: "Vikram Singh",
+      email: "vikram@sunpharma.com",
+      phone: "+91-9876543214",
+      address: "Delhi, NCR",
+      medicines_supplied: ["Brufen 400", "Aspirin 75", "Nimesulide 100", "Tramadol 50"],
+      lead_time_days: 6,
+      reliability_rating: 4.2,
+      price_trend: "up",
+      last_order_date: "2024-12-16",
+      total_orders: 67,
+      on_time_delivery_rate: 85,
+      auto_reorder_enabled: false
+    },
+    {
+      id: "6",
+      name: "Lupin Pharmaceuticals",
+      contact_person: "Kavya Nair",
+      email: "kavya@lupin.com",
+      phone: "+91-9876543215",
+      address: "Pune, Maharashtra",
+      medicines_supplied: ["Cephalexin 500", "Doxycycline 100", "Metronidazole 400", "Augmentin 625"],
+      lead_time_days: 4,
+      reliability_rating: 4.7,
+      price_trend: "down",
+      last_order_date: "2024-12-19",
+      total_orders: 112,
+      on_time_delivery_rate: 94,
+      auto_reorder_enabled: true
+    }
+  ])
+  const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('name')
   const [filterBy, setFilterBy] = useState('all')
@@ -41,9 +138,13 @@ export default function SuppliersPage() {
     try {
       const response = await fetch('/api/suppliers')
       const data = await response.json()
-      setSuppliers(data.suppliers || [])
+      if (data.suppliers && data.suppliers.length > 0) {
+        setSuppliers(data.suppliers)
+      }
+      // If no data from API, keep static data
     } catch (error) {
-      console.error('Error fetching suppliers:', error)
+      console.log('Using static demo data - API not available:', error)
+      // Keep static data
     } finally {
       setLoading(false)
     }

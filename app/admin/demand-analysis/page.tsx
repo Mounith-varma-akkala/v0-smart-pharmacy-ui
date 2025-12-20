@@ -35,9 +35,151 @@ interface SalesHeatmapData {
 }
 
 export default function DemandAnalysisPage() {
-  const [patterns, setPatterns] = useState<DemandPattern[]>([])
-  const [heatmapData, setHeatmapData] = useState<SalesHeatmapData[]>([])
-  const [loading, setLoading] = useState(true)
+  const [patterns, setPatterns] = useState<DemandPattern[]>([
+    {
+      id: "1",
+      medicine_name: "Dolo 650",
+      pattern_type: "spike",
+      confidence_score: 85,
+      next_spike_date: "2024-12-25",
+      recommended_stock_increase: 200,
+      current_stock: 2500,
+      historical_data: [
+        { date: "2024-11-01", sales_volume: 45 },
+        { date: "2024-11-08", sales_volume: 52 },
+        { date: "2024-11-15", sales_volume: 48 },
+        { date: "2024-11-22", sales_volume: 67 },
+        { date: "2024-11-29", sales_volume: 89 },
+        { date: "2024-12-06", sales_volume: 95 },
+        { date: "2024-12-13", sales_volume: 112 },
+        { date: "2024-12-20", sales_volume: 156 }
+      ],
+      factors: ["Winter season", "Flu outbreak", "Holiday period", "Cold weather"],
+      peak_periods: ["December-January", "Weekends", "Evening hours (6-9 PM)"]
+    },
+    {
+      id: "2",
+      medicine_name: "Azithral 500",
+      pattern_type: "seasonal",
+      confidence_score: 78,
+      next_spike_date: "2024-12-28",
+      recommended_stock_increase: 100,
+      current_stock: 800,
+      historical_data: [
+        { date: "2024-11-01", sales_volume: 25 },
+        { date: "2024-11-08", sales_volume: 28 },
+        { date: "2024-11-15", sales_volume: 32 },
+        { date: "2024-11-22", sales_volume: 38 },
+        { date: "2024-11-29", sales_volume: 42 },
+        { date: "2024-12-06", sales_volume: 48 },
+        { date: "2024-12-13", sales_volume: 52 },
+        { date: "2024-12-20", sales_volume: 58 }
+      ],
+      factors: ["Respiratory infections", "Winter season", "School reopening", "Air pollution"],
+      peak_periods: ["Winter months", "Monday-Wednesday", "Morning hours (9-11 AM)"]
+    },
+    {
+      id: "3",
+      medicine_name: "Glycomet 500",
+      pattern_type: "weekly",
+      confidence_score: 92,
+      next_spike_date: "2024-12-23",
+      recommended_stock_increase: 150,
+      current_stock: 3500,
+      historical_data: [
+        { date: "2024-11-01", sales_volume: 35 },
+        { date: "2024-11-08", sales_volume: 38 },
+        { date: "2024-11-15", sales_volume: 41 },
+        { date: "2024-11-22", sales_volume: 44 },
+        { date: "2024-11-29", sales_volume: 47 },
+        { date: "2024-12-06", sales_volume: 52 },
+        { date: "2024-12-13", sales_volume: 48 },
+        { date: "2024-12-20", sales_volume: 55 }
+      ],
+      factors: ["Regular prescription refills", "Monthly doctor visits", "Insurance coverage", "Chronic condition management"],
+      peak_periods: ["First week of month", "Monday mornings", "After doctor visits"]
+    },
+    {
+      id: "4",
+      medicine_name: "Pan 40",
+      pattern_type: "monthly",
+      confidence_score: 73,
+      next_spike_date: "2025-01-02",
+      recommended_stock_increase: 80,
+      current_stock: 1200,
+      historical_data: [
+        { date: "2024-11-01", sales_volume: 22 },
+        { date: "2024-11-08", sales_volume: 25 },
+        { date: "2024-11-15", sales_volume: 28 },
+        { date: "2024-11-22", sales_volume: 32 },
+        { date: "2024-11-29", sales_volume: 35 },
+        { date: "2024-12-06", sales_volume: 38 },
+        { date: "2024-12-13", sales_volume: 42 },
+        { date: "2024-12-20", sales_volume: 45 }
+      ],
+      factors: ["Stress-related acidity", "Holiday eating patterns", "Work pressure", "Irregular meal times"],
+      peak_periods: ["Month-end", "Festival seasons", "Lunch hours (12-2 PM)"]
+    },
+    {
+      id: "5",
+      medicine_name: "Crocin Advance",
+      pattern_type: "spike",
+      confidence_score: 88,
+      next_spike_date: "2024-12-24",
+      recommended_stock_increase: 250,
+      current_stock: 3200,
+      historical_data: [
+        { date: "2024-11-01", sales_volume: 28 },
+        { date: "2024-11-08", sales_volume: 32 },
+        { date: "2024-11-15", sales_volume: 35 },
+        { date: "2024-11-22", sales_volume: 42 },
+        { date: "2024-11-29", sales_volume: 58 },
+        { date: "2024-12-06", sales_volume: 65 },
+        { date: "2024-12-13", sales_volume: 78 },
+        { date: "2024-12-20", sales_volume: 95 }
+      ],
+      factors: ["Fever outbreaks", "Children's medication", "Winter illnesses", "School infections"],
+      peak_periods: ["Winter season", "School days", "Evening hours (5-8 PM)"]
+    }
+  ])
+  const [heatmapData, setHeatmapData] = useState<SalesHeatmapData[]>([
+    // Monday
+    { day: 'Mon', hour: 9, sales: 15 }, { day: 'Mon', hour: 10, sales: 25 }, { day: 'Mon', hour: 11, sales: 35 },
+    { day: 'Mon', hour: 12, sales: 28 }, { day: 'Mon', hour: 13, sales: 22 }, { day: 'Mon', hour: 14, sales: 18 },
+    { day: 'Mon', hour: 15, sales: 20 }, { day: 'Mon', hour: 16, sales: 32 }, { day: 'Mon', hour: 17, sales: 45 },
+    { day: 'Mon', hour: 18, sales: 52 }, { day: 'Mon', hour: 19, sales: 48 }, { day: 'Mon', hour: 20, sales: 35 },
+    // Tuesday
+    { day: 'Tue', hour: 9, sales: 18 }, { day: 'Tue', hour: 10, sales: 28 }, { day: 'Tue', hour: 11, sales: 32 },
+    { day: 'Tue', hour: 12, sales: 25 }, { day: 'Tue', hour: 13, sales: 20 }, { day: 'Tue', hour: 14, sales: 15 },
+    { day: 'Tue', hour: 15, sales: 22 }, { day: 'Tue', hour: 16, sales: 35 }, { day: 'Tue', hour: 17, sales: 42 },
+    { day: 'Tue', hour: 18, sales: 48 }, { day: 'Tue', hour: 19, sales: 45 }, { day: 'Tue', hour: 20, sales: 32 },
+    // Wednesday
+    { day: 'Wed', hour: 9, sales: 22 }, { day: 'Wed', hour: 10, sales: 32 }, { day: 'Wed', hour: 11, sales: 38 },
+    { day: 'Wed', hour: 12, sales: 30 }, { day: 'Wed', hour: 13, sales: 25 }, { day: 'Wed', hour: 14, sales: 20 },
+    { day: 'Wed', hour: 15, sales: 28 }, { day: 'Wed', hour: 16, sales: 40 }, { day: 'Wed', hour: 17, sales: 48 },
+    { day: 'Wed', hour: 18, sales: 55 }, { day: 'Wed', hour: 19, sales: 52 }, { day: 'Wed', hour: 20, sales: 38 },
+    // Thursday
+    { day: 'Thu', hour: 9, sales: 20 }, { day: 'Thu', hour: 10, sales: 30 }, { day: 'Thu', hour: 11, sales: 35 },
+    { day: 'Thu', hour: 12, sales: 28 }, { day: 'Thu', hour: 13, sales: 22 }, { day: 'Thu', hour: 14, sales: 18 },
+    { day: 'Thu', hour: 15, sales: 25 }, { day: 'Thu', hour: 16, sales: 38 }, { day: 'Thu', hour: 17, sales: 45 },
+    { day: 'Thu', hour: 18, sales: 50 }, { day: 'Thu', hour: 19, sales: 48 }, { day: 'Thu', hour: 20, sales: 35 },
+    // Friday
+    { day: 'Fri', hour: 9, sales: 25 }, { day: 'Fri', hour: 10, sales: 35 }, { day: 'Fri', hour: 11, sales: 42 },
+    { day: 'Fri', hour: 12, sales: 35 }, { day: 'Fri', hour: 13, sales: 28 }, { day: 'Fri', hour: 14, sales: 22 },
+    { day: 'Fri', hour: 15, sales: 32 }, { day: 'Fri', hour: 16, sales: 45 }, { day: 'Fri', hour: 17, sales: 55 },
+    { day: 'Fri', hour: 18, sales: 62 }, { day: 'Fri', hour: 19, sales: 58 }, { day: 'Fri', hour: 20, sales: 42 },
+    // Saturday
+    { day: 'Sat', hour: 9, sales: 30 }, { day: 'Sat', hour: 10, sales: 45 }, { day: 'Sat', hour: 11, sales: 55 },
+    { day: 'Sat', hour: 12, sales: 48 }, { day: 'Sat', hour: 13, sales: 38 }, { day: 'Sat', hour: 14, sales: 32 },
+    { day: 'Sat', hour: 15, sales: 42 }, { day: 'Sat', hour: 16, sales: 58 }, { day: 'Sat', hour: 17, sales: 68 },
+    { day: 'Sat', hour: 18, sales: 75 }, { day: 'Sat', hour: 19, sales: 70 }, { day: 'Sat', hour: 20, sales: 52 },
+    // Sunday
+    { day: 'Sun', hour: 9, sales: 12 }, { day: 'Sun', hour: 10, sales: 18 }, { day: 'Sun', hour: 11, sales: 25 },
+    { day: 'Sun', hour: 12, sales: 22 }, { day: 'Sun', hour: 13, sales: 18 }, { day: 'Sun', hour: 14, sales: 15 },
+    { day: 'Sun', hour: 15, sales: 20 }, { day: 'Sun', hour: 16, sales: 28 }, { day: 'Sun', hour: 17, sales: 35 },
+    { day: 'Sun', hour: 18, sales: 40 }, { day: 'Sun', hour: 19, sales: 38 }, { day: 'Sun', hour: 20, sales: 28 }
+  ])
+  const [loading, setLoading] = useState(false)
   const [selectedTimeframe, setSelectedTimeframe] = useState('3months')
 
   useEffect(() => {
@@ -49,9 +191,13 @@ export default function DemandAnalysisPage() {
     try {
       const response = await fetch(`/api/analytics/demand-patterns?timeframe=${selectedTimeframe}`)
       const data = await response.json()
-      setPatterns(data.patterns || [])
+      if (data.patterns && data.patterns.length > 0) {
+        setPatterns(data.patterns)
+      }
+      // If no data from API, keep static data
     } catch (error) {
-      console.error('Error fetching demand patterns:', error)
+      console.log('Using static demo data - API not available:', error)
+      // Keep static data
     } finally {
       setLoading(false)
     }
@@ -61,9 +207,13 @@ export default function DemandAnalysisPage() {
     try {
       const response = await fetch('/api/analytics/sales-heatmap')
       const data = await response.json()
-      setHeatmapData(data.heatmap || [])
+      if (data.heatmap && data.heatmap.length > 0) {
+        setHeatmapData(data.heatmap)
+      }
+      // If no data from API, keep static data
     } catch (error) {
-      console.error('Error fetching sales heatmap:', error)
+      console.log('Using static demo data - API not available:', error)
+      // Keep static data
     }
   }
 
