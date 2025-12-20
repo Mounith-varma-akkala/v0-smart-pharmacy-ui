@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Activity, TrendingUp, AlertTriangle, Bot, FileCheck, Package, DollarSign, BarChart3 } from "lucide-react"
@@ -71,204 +70,246 @@ export default function LandingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/20 to-background noise-bg">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
       {/* Navigation */}
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-background/80 border-b border-border/50"
-      >
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-white/80 border-b border-slate-200/50 shadow-sm">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <Activity className="w-6 h-6 text-primary-foreground" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg">
+                <Activity className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold">Pharm</span>
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                SmartPharm
+              </span>
             </div>
             {/* Left nav links */}
             <div className="hidden md:flex items-center gap-6">
-              <Link href="#features" className="text-sm hover:text-primary transition-colors">
+              <Link href="#features" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
                 Features
               </Link>
-              <Link href="#pricing" className="text-sm hover:text-primary transition-colors">
+              <Link href="#pricing" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
                 Pricing
               </Link>
             </div>
           </div>
           {/* Right nav links */}
           <div className="flex items-center gap-4">
-            <Link href="#about" className="hidden md:block text-sm hover:text-primary transition-colors">
+            <Link href="#about" className="hidden md:block text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
               About
             </Link>
-            <Link href="#contact" className="hidden md:block text-sm hover:text-primary transition-colors">
+            <Link href="#contact" className="hidden md:block text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
               Contact
             </Link>
             <Link href="/login">
-              <Button variant="ghost">Login</Button>
+              <Button variant="ghost" className="font-medium">Login</Button>
             </Link>
             <Link href="/signup">
-              <Button>Get Started</Button>
+              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg font-medium">
+                Get Started
+              </Button>
             </Link>
           </div>
         </div>
-      </motion.nav>
+      </nav>
 
-      {/* Hero Section - Minimalist with animated SVG */}
+      {/* Hero Section - Clean with Pill Image */}
       <section className="pt-32 pb-20 px-6 min-h-screen flex items-center">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col items-center text-center">
-            {/* Animated SVG Icon */}
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="mb-8"
-            >
-              <motion.div
-                animate={{
-                  y: [0, -20, 0],
-                  rotate: [0, 5, -5, 0],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
-                }}
-                className="relative w-48 h-48"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-full blur-3xl" />
-                <Image
-                  src="/images/medical-cross.svg"
-                  alt="Pharma"
-                  width={192}
-                  height={192}
-                  className="relative z-10 drop-shadow-2xl"
-                />
-              </motion.div>
-            </motion.div>
+        <div className="container mx-auto max-w-7xl">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <h1 className="text-6xl lg:text-7xl font-bold leading-tight">
+                  <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    Smart
+                  </span>
+                  <br />
+                  <span className="text-slate-900">Pharmacy</span>
+                  <br />
+                  <span className="text-slate-600 text-4xl lg:text-5xl">Management</span>
+                </h1>
+                
+                <p className="text-xl text-slate-600 leading-relaxed max-w-lg">
+                  Revolutionary inventory management system powered by AI. Track 10,000+ medicines, 
+                  reduce wastage by 85%, and automate your entire pharmacy workflow.
+                </p>
+              </div>
 
-            {/* Pharm Logo Text */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-7xl font-bold mb-8 bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent"
-            >
-              Pharm
-            </motion.h1>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/admin/dashboard">
+                  <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-xl text-lg px-8 py-6 font-semibold">
+                    View Dashboard
+                  </Button>
+                </Link>
+                <Link href="/import-json-data">
+                  <Button size="lg" variant="outline" className="border-2 border-slate-300 hover:border-blue-600 hover:text-blue-600 text-lg px-8 py-6 font-semibold">
+                    Import Data
+                  </Button>
+                </Link>
+              </div>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              className="text-xl text-muted-foreground max-w-2xl"
-            >
-              Next-generation pharmacy inventory management
-            </motion.p>
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-6 pt-8">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-blue-600">10K+</div>
+                  <div className="text-sm text-slate-600 font-medium">Medicines Tracked</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600">85%</div>
+                  <div className="text-sm text-slate-600 font-medium">Wastage Reduced</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-purple-600">24/7</div>
+                  <div className="text-sm text-slate-600 font-medium">AI Monitoring</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Content - Pill Image */}
+            <div className="flex justify-center lg:justify-end">
+              <div className="relative">
+                {/* Gradient Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-indigo-400/20 to-purple-400/20 rounded-full blur-3xl scale-110" />
+                
+                {/* Pill Image */}
+                <div className="relative w-96 h-96 flex items-center justify-center">
+                  <svg
+                    viewBox="0 0 400 400"
+                    className="w-full h-full drop-shadow-2xl"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    {/* Pill Shape */}
+                    <defs>
+                      <linearGradient id="pillGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#3B82F6" />
+                        <stop offset="50%" stopColor="#6366F1" />
+                        <stop offset="100%" stopColor="#8B5CF6" />
+                      </linearGradient>
+                      <linearGradient id="pillGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#F8FAFC" />
+                        <stop offset="100%" stopColor="#E2E8F0" />
+                      </linearGradient>
+                    </defs>
+                    
+                    {/* Pill Body */}
+                    <rect
+                      x="100"
+                      y="150"
+                      width="200"
+                      height="100"
+                      rx="50"
+                      ry="50"
+                      fill="url(#pillGradient)"
+                      className="drop-shadow-lg"
+                    />
+                    
+                    {/* Pill Cap */}
+                    <rect
+                      x="100"
+                      y="150"
+                      width="100"
+                      height="100"
+                      rx="50"
+                      ry="50"
+                      fill="url(#pillGradient2)"
+                      className="drop-shadow-lg"
+                    />
+                    
+                    {/* Highlight */}
+                    <ellipse
+                      cx="140"
+                      cy="180"
+                      rx="15"
+                      ry="8"
+                      fill="rgba(255,255,255,0.4)"
+                    />
+                  </svg>
+                </div>
+                
+                {/* Floating Elements */}
+                <div className="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl shadow-lg flex items-center justify-center">
+                  <Activity className="w-8 h-8 text-white" />
+                </div>
+                
+                <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl shadow-lg flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-white" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-6">
-        <div className="container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-5xl font-bold mb-4">Enterprise-Grade Features</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to manage pharmacy inventory with precision and intelligence
+      <section id="features" className="py-20 px-6 bg-white/50">
+        <div className="container mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold mb-6 text-slate-900">
+              Enterprise-Grade Features
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Everything you need to manage pharmacy inventory with precision, intelligence, and complete automation
             </p>
-          </motion.div>
+          </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <FeatureCard key={index} {...feature} delay={index * 0.1} />
+              <FeatureCard key={index} {...feature} />
             ))}
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-border bg-gradient-to-br from-card/50 to-background noise-bg">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-primary-foreground" />
+      <footer className="py-16 px-6 bg-slate-900 text-white">
+        <div className="container mx-auto max-w-7xl">
+          <div className="grid md:grid-cols-4 gap-8 mb-12">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
+                  <Activity className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-xl font-bold">Pharm</span>
+                <span className="text-2xl font-bold">SmartPharm</span>
               </div>
-            <p className="text-sm text-muted-foreground">Pharmacy inventory management powered by AI</p>
+              <p className="text-slate-400 leading-relaxed">
+                Next-generation pharmacy inventory management powered by artificial intelligence
+              </p>
             </div>
+            
             <div>
-              <h4 className="font-semibold mb-3">Product</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link href="#" className="hover:text-primary transition-colors">
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-primary transition-colors">
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-primary transition-colors">
-                    Demo
-                  </Link>
-                </li>
+              <h4 className="font-semibold mb-4 text-lg">Product</h4>
+              <ul className="space-y-3 text-slate-400">
+                <li><Link href="#" className="hover:text-white transition-colors">Features</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Pricing</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Demo</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">API</Link></li>
               </ul>
             </div>
+            
             <div>
-              <h4 className="font-semibold mb-3">Company</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link href="#" className="hover:text-primary transition-colors">
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-primary transition-colors">
-                    Careers
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-primary transition-colors">
-                    Contact
-                  </Link>
-                </li>
+              <h4 className="font-semibold mb-4 text-lg">Company</h4>
+              <ul className="space-y-3 text-slate-400">
+                <li><Link href="#" className="hover:text-white transition-colors">About</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Careers</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Blog</Link></li>
               </ul>
             </div>
+            
             <div>
-              <h4 className="font-semibold mb-3">Legal</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link href="#" className="hover:text-primary transition-colors">
-                    Privacy
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-primary transition-colors">
-                    Terms
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-primary transition-colors">
-                    Security
-                  </Link>
-                </li>
+              <h4 className="font-semibold mb-4 text-lg">Legal</h4>
+              <ul className="space-y-3 text-slate-400">
+                <li><Link href="#" className="hover:text-white transition-colors">Privacy</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Terms</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Security</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Compliance</Link></li>
               </ul>
             </div>
           </div>
-          <div className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            <p>© 2025 Pharm. All rights reserved.</p>
+          
+          <div className="pt-8 border-t border-slate-800 text-center">
+            <p className="text-slate-400">© 2025 SmartPharm. All rights reserved. Built with ❤️ for pharmacies worldwide.</p>
           </div>
         </div>
       </footer>
@@ -280,28 +321,22 @@ function FeatureCard({
   icon: Icon,
   title,
   description,
-  delay = 0,
 }: {
   icon: any
   title: string
   description: string
-  delay?: number
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      whileHover={{ y: -8, transition: { duration: 0.2 } }}
-    >
-      <Card className="p-6 h-full glass hover:shadow-xl transition-all duration-300 group border-border/50">
-        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 group-hover:scale-110 transition-all">
-          <Icon className="w-6 h-6 text-primary" />
-        </div>
-        <h3 className="text-lg font-bold mb-2">{title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
-      </Card>
-    </motion.div>
+    <Card className="p-8 h-full bg-white/80 backdrop-blur-sm border-slate-200/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 group hover:-translate-y-2">
+      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 flex items-center justify-center mb-6 group-hover:from-blue-500/20 group-hover:to-indigo-500/20 transition-all duration-300">
+        <Icon className="w-8 h-8 text-blue-600 group-hover:scale-110 transition-transform duration-300" />
+      </div>
+      <h3 className="text-xl font-bold mb-4 text-slate-900 group-hover:text-blue-600 transition-colors">
+        {title}
+      </h3>
+      <p className="text-slate-600 leading-relaxed">
+        {description}
+      </p>
+    </Card>
   )
 }
