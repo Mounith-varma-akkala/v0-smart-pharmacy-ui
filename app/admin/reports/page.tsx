@@ -23,37 +23,44 @@ export default function ReportsPage() {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        // Fetch sales data from MySQL
-        const response = await fetch('/api/sales/stats?period=month')
-        const result = await response.json()
+        // Fetch sales data from Supabase
+        const { data: sales, error: salesError } = await supabase
+          .from("sales")
+          .select("quantity, total_price, sale_date")
+          .order("sale_date", { ascending: false })
 
-        if (result.success) {
-          const { summary, salesTrend } = result.data
-          
-          setStats({
-            totalRevenue: summary.total_revenue || 0,
-            totalProfit: (summary.total_revenue || 0) * 0.3, // Assuming 30% profit margin
-            totalSales: summary.total_units_sold || 0,
-            stockValue: 0, // Will be calculated from medicines
-          })
-
-          // Process sales trend data for chart
-          const chartData = salesTrend.map((item: any) => ({
-            date: new Date(item.sale_day).toLocaleDateString(),
-            revenue: item.revenue || 0,
-            sales: item.units_sold || 0,
-          }))
-          setSalesTrend(chartData)
+        if (salesError) {
+          console.error('Error fetching sales data:', salesError)
+          throw salesError
         }
+
+        const totalRevenue = sales?.reduce((sum, s) => sum + (s.total_price || 0), 0) || 0
+        const totalSalesCount = sales?.reduce((sum, s) => sum + (s.quantity || 0), 0) || 0
 
         // Fetch inventory value from Supabase
         const { data: medicines } = await supabase.from("medicines").select("quantity, price")
         const stockValue = medicines?.reduce((sum, m) => sum + (m.quantity || 0) * (m.price || 0), 0) || 0
 
-        setStats(prev => ({
-          ...prev,
-          stockValue
-        }))
+        setStats({
+          totalRevenue,
+          totalProfit: totalRevenue * 0.3, // Assuming 30% profit margin
+          totalSales: totalSalesCount,
+          stockValue,
+        })
+
+        // Process sales trend data for chart
+        const trendMap = new Map()
+        sales?.forEach((sale) => {
+          const date = new Date(sale.sale_date).toLocaleDateString()
+          trendMap.set(date, (trendMap.get(date) || 0) + (sale.total_price || 0))
+        })
+
+        const chartData = Array.from(trendMap.entries())
+          .map(([date, revenue]) => ({ date, revenue }))
+          .slice(0, 7) // Last 7 days
+          .reverse()
+
+        setSalesTrend(chartData)
 
       } catch (error) {
         console.error('Error fetching reports data:', error)

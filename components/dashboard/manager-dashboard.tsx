@@ -30,58 +30,58 @@ export default function ManagerDashboard() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      // Fetch today's sales from MySQL
-      try {
-        const response = await fetch('/api/sales/stats?period=today')
-        const result = await response.json()
-        const soldToday = result.success ? result.data.summary.total_units_sold || 0 : 0
+      // Fetch today's sales from Supabase
+      const today = new Date().toISOString().split("T")[0]
+      const { data: todaySales, error: salesError } = await supabase
+        .from("sales")
+        .select("quantity")
+        .gte("sale_date", `${today}T00:00:00`)
+        .lte("sale_date", `${today}T23:59:59`)
 
-        // Fetch total stock
-        const { data: medicines } = await supabase.from("medicines").select("quantity")
-        const totalStock = medicines?.reduce((sum, m) => sum + (m.quantity || 0), 0) || 0
-
-        // Fetch pending alerts
-        const { count: alertCount } = await supabase
-          .from("alerts")
-          .select("*", { count: "exact", head: true })
-          .eq("is_read", false)
-
-        setStats({
-          soldToday,
-          remainingStock: totalStock,
-          pendingAlerts: alertCount || 0,
-          salesTarget: 85,
-        })
-      } catch (error) {
-        console.error('Error fetching MySQL sales data:', error)
-        // Fallback to default values
-        setStats({
-          soldToday: 0,
-          remainingStock: 0,
-          pendingAlerts: 0,
-          salesTarget: 85,
-        })
+      if (salesError) {
+        console.error('Error fetching sales data:', salesError)
       }
+
+      const soldToday = todaySales?.reduce((sum, s) => sum + (s.quantity || 0), 0) || 0
+
+      // Fetch total stock
+      const { data: medicines } = await supabase.from("medicines").select("quantity")
+      const totalStock = medicines?.reduce((sum, m) => sum + (m.quantity || 0), 0) || 0
+
+      // Fetch pending alerts
+      const { count: alertCount } = await supabase
+        .from("alerts")
+        .select("*", { count: "exact", head: true })
+        .eq("is_read", false)
+
+      setStats({
+        soldToday,
+        remainingStock: totalStock,
+        pendingAlerts: alertCount || 0,
+        salesTarget: 85,
+      })
     }
 
     fetchStats()
 
-    // Set up polling for real-time updates (every 30 seconds)
-    const interval = setInterval(fetchStats, 30000)
-
-    // Real-time subscription for medicines and alerts (keep Supabase for these)
+    // Real-time subscription for sales, medicines, and alerts
     const channel = supabase
       .channel("manager-updates")
+      .on("postgres_changes", { event: "*", schema: "public", table: "sales" }, () => {
+        console.log('Sales data changed, refreshing stats...')
+        fetchStats()
+      })
       .on("postgres_changes", { event: "*", schema: "public", table: "medicines" }, () => {
+        console.log('Medicines data changed, refreshing stats...')
         fetchStats()
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "alerts" }, () => {
+        console.log('Alerts data changed, refreshing stats...')
         fetchStats()
       })
       .subscribe()
 
     return () => {
-      clearInterval(interval)
       supabase.removeChannel(channel)
     }
     }

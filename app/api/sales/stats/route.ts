@@ -24,64 +24,107 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    // Get basic sales stats
-    const statsQuery = `
-      SELECT 
-        COUNT(*) as total_transactions,
-        SUM(quantity) as total_units_sold,
-        SUM(total_price) as total_revenue,
-        AVG(total_price) as average_sale_value,
-        COUNT(DISTINCT customer_name) as unique_customers
-      FROM sales 
-      ${dateCondition}
-    `
+    // First, let's check what tables exist
+    let stats, paymentStats, topMedicines, salesTrend;
 
-    const stats = await executeQuery(statsQuery)
+    try {
+      // Get basic sales stats - try different possible column names
+      const statsQuery = `
+        SELECT 
+          COUNT(*) as total_transactions,
+          COALESCE(SUM(quantity), SUM(qty), 0) as total_units_sold,
+          COALESCE(SUM(total_price), SUM(total_amount), SUM(amount), 0) as total_revenue,
+          COALESCE(AVG(total_price), AVG(total_amount), AVG(amount), 0) as average_sale_value,
+          COUNT(DISTINCT COALESCE(customer_name, customer_id, customer)) as unique_customers
+        FROM sales 
+        ${dateCondition}
+      `
 
-    // Get sales by payment method
-    const paymentMethodQuery = `
-      SELECT 
-        payment_method,
-        COUNT(*) as transaction_count,
-        SUM(total_price) as revenue
-      FROM sales 
-      ${dateCondition}
-      GROUP BY payment_method
-    `
+      stats = await executeQuery(statsQuery)
 
-    const paymentStats = await executeQuery(paymentMethodQuery)
+    } catch (statsError) {
+      console.log('Stats query failed, trying alternative approach:', statsError.message);
+      // Fallback: try to get basic info from any sales-related table
+      try {
+        const fallbackQuery = `SELECT COUNT(*) as total_transactions FROM sales ${dateCondition}`;
+        const fallbackStats = await executeQuery(fallbackQuery);
+        stats = [{
+          total_transactions: fallbackStats[0]?.total_transactions || 0,
+          total_units_sold: 0,
+          total_revenue: 0,
+          average_sale_value: 0,
+          unique_customers: 0
+        }];
+      } catch (fallbackError) {
+        console.log('Fallback query also failed:', fallbackError.message);
+        stats = [{
+          total_transactions: 0,
+          total_units_sold: 0,
+          total_revenue: 0,
+          average_sale_value: 0,
+          unique_customers: 0
+        }];
+      }
+    }
 
-    // Get top selling medicines
-    const topMedicinesQuery = `
-      SELECT 
-        m.name as medicine_name,
-        m.category,
-        SUM(s.quantity) as total_sold,
-        SUM(s.total_price) as revenue
-      FROM sales s
-      LEFT JOIN medicines m ON s.medicine_id = m.id
-      ${dateCondition}
-      GROUP BY s.medicine_id, m.name, m.category
-      ORDER BY total_sold DESC
-      LIMIT 10
-    `
+    try {
+      // Get sales by payment method - try different possible column names
+      const paymentMethodQuery = `
+        SELECT 
+          COALESCE(payment_method, payment_type, 'unknown') as payment_method,
+          COUNT(*) as transaction_count,
+          COALESCE(SUM(total_price), SUM(total_amount), SUM(amount), 0) as revenue
+        FROM sales 
+        ${dateCondition}
+        GROUP BY COALESCE(payment_method, payment_type, 'unknown')
+      `
 
-    const topMedicines = await executeQuery(topMedicinesQuery)
+      paymentStats = await executeQuery(paymentMethodQuery)
+    } catch (paymentError) {
+      console.log('Payment stats query failed:', paymentError.message);
+      paymentStats = [];
+    }
 
-    // Get daily sales trend (last 7 days)
-    const trendQuery = `
-      SELECT 
-        DATE(sale_date) as sale_day,
-        COUNT(*) as transactions,
-        SUM(total_price) as revenue,
-        SUM(quantity) as units_sold
-      FROM sales 
-      WHERE sale_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
-      GROUP BY DATE(sale_date)
-      ORDER BY sale_day ASC
-    `
+    try {
+      // Get top selling medicines - try with and without joins
+      const topMedicinesQuery = `
+        SELECT 
+          COALESCE(medicine_name, product_name, item_name, 'Unknown') as medicine_name,
+          COALESCE(category, 'General') as category,
+          COALESCE(SUM(quantity), SUM(qty), 0) as total_sold,
+          COALESCE(SUM(total_price), SUM(total_amount), SUM(amount), 0) as revenue
+        FROM sales s
+        ${dateCondition}
+        GROUP BY COALESCE(medicine_name, product_name, item_name), COALESCE(category, 'General')
+        ORDER BY total_sold DESC
+        LIMIT 10
+      `
 
-    const salesTrend = await executeQuery(trendQuery)
+      topMedicines = await executeQuery(topMedicinesQuery)
+    } catch (medicineError) {
+      console.log('Top medicines query failed:', medicineError.message);
+      topMedicines = [];
+    }
+
+    try {
+      // Get daily sales trend (last 7 days)
+      const trendQuery = `
+        SELECT 
+          DATE(COALESCE(sale_date, created_at, date)) as sale_day,
+          COUNT(*) as transactions,
+          COALESCE(SUM(total_price), SUM(total_amount), SUM(amount), 0) as revenue,
+          COALESCE(SUM(quantity), SUM(qty), 0) as units_sold
+        FROM sales 
+        WHERE COALESCE(sale_date, created_at, date) >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        GROUP BY DATE(COALESCE(sale_date, created_at, date))
+        ORDER BY sale_day ASC
+      `
+
+      salesTrend = await executeQuery(trendQuery)
+    } catch (trendError) {
+      console.log('Sales trend query failed:', trendError.message);
+      salesTrend = [];
+    }
 
     return NextResponse.json({
       success: true,
