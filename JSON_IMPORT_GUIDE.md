@@ -161,9 +161,30 @@ curl -X POST http://localhost:3001/api/import-json \
   }'
 ```
 
-### **Method 3: Node.js Script**
+### **Method 3: Command Line Script (Quick & Easy)**
 
-Create a file `import-script.js`:
+Use the provided import script for quick imports:
+
+```bash
+# Make sure your app is running first
+npm run dev
+
+# In another terminal, import your JSON files:
+node scripts/import-json-to-supabase.js sales.json sales
+node scripts/import-json-to-supabase.js medicines.json medicines
+node scripts/import-json-to-supabase.js purchases.json purchases
+node scripts/import-json-to-supabase.js suppliers.json suppliers
+```
+
+**Script Features:**
+- ✅ Validates JSON format before importing
+- ✅ Shows progress and results
+- ✅ Handles large files automatically
+- ✅ Provides helpful error messages
+
+### **Method 4: Custom Node.js Script**
+
+Create your own `import-script.js`:
 
 ```javascript
 const fs = require('fs')

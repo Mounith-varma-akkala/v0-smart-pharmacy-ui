@@ -1,0 +1,3 @@
+{
+  "/api/import-json/route": "app/api/import-json/route.js"
+}
