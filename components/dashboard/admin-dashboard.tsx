@@ -96,7 +96,7 @@ export default function AdminDashboard() {
       })
 
       // Fetch category-wise stock
-      const { data: allMedicines } = await supabase.from("medicines").select("category, quantity")
+      const { data: allMedicines } = await supabase.from("medicines").select("category, quantity, expiry_date")
       const categoryMap = new Map<string, number>()
       allMedicines?.forEach((med) => {
         const cat = med.category || "Other"

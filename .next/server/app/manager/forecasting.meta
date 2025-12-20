@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/manager/layout,_N_T_/manager/forecasting/layout,_N_T_/manager/forecasting/page,_N_T_/manager/forecasting"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/manager/forecasting/__PAGE__",
+    "/manager/forecasting",
+    "/manager",
+    "/_index",
+    "/_head"
+  ]
+}

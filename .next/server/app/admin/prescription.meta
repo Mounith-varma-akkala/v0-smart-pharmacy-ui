@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/admin/layout,_N_T_/admin/prescription/layout,_N_T_/admin/prescription/page,_N_T_/admin/prescription"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/admin/prescription/__PAGE__",
+    "/admin/prescription",
+    "/admin",
+    "/_index",
+    "/_head"
+  ]
+}
