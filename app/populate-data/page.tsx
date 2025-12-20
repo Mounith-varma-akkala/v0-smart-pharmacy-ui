@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -155,6 +156,41 @@ export default function PopulateDataPage() {
             Populate your database with realistic data for all pharmacy features
           </p>
         </div>
+
+        {/* Fresh Database Setup */}
+        <Card className="border-blue-200 bg-blue-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-blue-900">
+              <Database className="w-6 h-6" />
+              Fresh Database Setup
+            </CardTitle>
+            <CardDescription className="text-blue-700">
+              Start with a completely fresh database with sample medicines, sales, and suppliers
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-white rounded-lg border">
+              <div>
+                <h3 className="font-medium text-blue-900">Create New Database</h3>
+                <p className="text-sm text-blue-700">
+                  Clears all existing data and creates fresh sample data with 10 medicines, 30+ sales records, and 3 suppliers
+                </p>
+              </div>
+              <Button asChild variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-100">
+                <Link href="/setup-fresh-database">
+                  Setup Fresh Database
+                </Link>
+              </Button>
+            </div>
+            <Alert className="border-blue-200 bg-blue-50">
+              <AlertTriangle className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-blue-800">
+                <strong>Recommended:</strong> If you're starting fresh or having issues with existing data, 
+                use the Fresh Database Setup first, then come back here to add additional features.
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
 
         {/* Status Summary */}
         <div className="grid gap-4 md:grid-cols-4">

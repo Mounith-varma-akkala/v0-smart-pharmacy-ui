@@ -263,6 +263,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/setup-fresh-database/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/setup-fresh-database">> = Specific
+  const handler = {} as typeof import("../../../app/setup-fresh-database/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/signup/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/signup">> = Specific
@@ -479,6 +488,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/api/reset-database/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/reset-database">> = Specific
+  const handler = {} as typeof import("../../../app/api/reset-database/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/api/sales/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/sales">> = Specific
@@ -501,6 +519,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/setup-database">> = Specific
   const handler = {} as typeof import("../../../app/api/setup-database/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/setup-fresh-database/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/setup-fresh-database">> = Specific
+  const handler = {} as typeof import("../../../app/api/setup-fresh-database/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check
