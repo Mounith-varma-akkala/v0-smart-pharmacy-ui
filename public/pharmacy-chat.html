@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Pharmacy Chat Assistant</title>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+        
+        .chat-demo {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .action-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .action-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        
+        .action-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .action-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        
+        .action-desc {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .feature {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .feature h3 {
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        
+        .feature p {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Custom n8n chat styling */
+        .n8n-chat-button {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+        }
+        
+        .n8n-chat-button:hover {
+            transform: scale(1.05) !important;
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+        }
+        
+        .n8n-chat-window {
+            border-radius: 12px !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .n8n-chat-header {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Smart Pharmacy Assistant</h1>
+            <p>Get instant help with medicines, health advice, and pharmacy services</p>
+        </div>
+        
+        <div class="chat-demo">
+            <h2>Try Our AI Assistant</h2>
+            <p>Click the chat button in the bottom right corner to start a conversation, or try one of these quick actions:</p>
+        </div>
+        
+        <div class="quick-actions">
+            <div class="action-card" onclick="sendQuickMessage('I need information about a specific medicine')">
+                <span class="action-icon">💊</span>
+                <div class="action-title">Medicine Information</div>
+                <div class="action-desc">Get details about any medication</div>
+            </div>
+            
+            <div class="action-card" onclick="sendQuickMessage('How should I take my medication?')">
+                <span class="action-icon">📋</span>
+                <div class="action-title">Dosage Instructions</div>
+                <div class="action-desc">Learn proper dosage and timing</div>
+            </div>
+            
+            <div class="action-card" onclick="sendQuickMessage('What are the side effects of my medicine?')">
+                <span class="action-icon">⚠️</span>
+                <div class="action-title">Side Effects</div>
+                <div class="action-desc">Understand potential side effects</div>
+            </div>
+            
+            <div class="action-card" onclick="sendQuickMessage('Can I take these medicines together?')">
+                <span class="action-icon">🔄</span>
+                <div class="action-title">Drug Interactions</div>
+                <div class="action-desc">Check medicine compatibility</div>
+            </div>
+            
+            <div class="action-card" onclick="sendQuickMessage('I need general health advice')">
+                <span class="action-icon">🩺</span>
+                <div class="action-title">Health Advice</div>
+                <div class="action-desc">Get general health guidance</div>
+            </div>
+            
+            <div class="action-card" onclick="sendQuickMessage('What are your pharmacy hours?')">
+                <span class="action-icon">🕒</span>
+                <div class="action-title">Store Information</div>
+                <div class="action-desc">Hours, location, and services</div>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🤖 AI-Powered Assistance</h3>
+                <p>Our advanced AI understands medical terminology and provides accurate, helpful responses about medications and health topics.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>🔒 Privacy Protected</h3>
+                <p>Your conversations are secure and private. We follow strict healthcare privacy guidelines to protect your information.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>⏰ 24/7 Availability</h3>
+                <p>Get help anytime, day or night. Our AI assistant is always ready to answer your pharmacy and health questions.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>📚 Comprehensive Knowledge</h3>
+                <p>Access information about thousands of medications, their uses, dosages, interactions, and side effects.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- n8n Chat Widget Container -->
+    <div id="pharmacy-chat-widget"></div>
+
+    <!-- Load n8n Chat Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@n8n/chat@latest/dist/chat.bundle.js"></script>
+    
+    <script>
+        // Pharmacy Chat Configuration
+        const pharmacyChatConfig = {
+            webhookUrl: 'https://shyam.mlritcie.in/webhook/223b953b-ef97-4800-a1be-8b05890044c1/chat',
+            webhookConfig: {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            },
+            target: '#pharmacy-chat-widget',
+            mode: 'window',
+            chatInputKey: 'message',
+            chatSessionKey: 'sessionId',
+            loadPreviousSession: true,
+            metadata: {
+                source: 'pharmacy-website',
+                version: '1.0.0',
+                userAgent: navigator.userAgent
+            },
+            showWelcomeScreen: true,
+            defaultLanguage: 'en',
+            initialMessages: [
+                'Welcome to Smart Pharmacy! 💊',
+                'I\'m your AI pharmacy assistant. I can help you with:',
+                '• Medicine information and dosages',
+                '• Drug interactions and side effects', 
+                '• Health advice and recommendations',
+                '• Prescription queries',
+                '• Stock availability',
+                'How can I assist you today?'
+            ],
+            i18n: {
+                en: {
+                    title: 'Smart Pharmacy Assistant 💊',
+                    subtitle: 'Get instant help with medicines, health advice, and pharmacy services. Available 24/7.',
+                    footer: 'Powered by AI • Smart Pharmacy',
+                    getStarted: 'Start Conversation',
+                    inputPlaceholder: 'Ask about medicines, dosages, side effects...',
+                    sendButton: 'Send',
+                    closeButton: 'Close Chat',
+                    minimizeButton: 'Minimize',
+                    typingIndicator: 'Assistant is typing...',
+                    connectionError: 'Connection lost. Trying to reconnect...',
+                    retryButton: 'Retry',
+                    clearChat: 'Clear Conversation'
+                }
+            },
+            enableStreaming: false
+        };
+
+        // Initialize the chat when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof createChat === 'function') {
+                createChat(pharmacyChatConfig);
+            } else {
+                console.error('n8n createChat function not available');
+            }
+        });
+
+        // Function to send quick messages
+        function sendQuickMessage(message) {
+            // This would typically interact with the n8n chat instance
+            // For now, we'll just alert the user to use the chat widget
+            alert('Please use the chat widget in the bottom right corner to ask: "' + message + '"');
+        }
+
+        // Add some interactive behavior
+        document.querySelectorAll('.action-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
